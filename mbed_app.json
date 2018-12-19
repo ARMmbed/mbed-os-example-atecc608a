@@ -13,5 +13,6 @@
             "cryptoauthlib.i2c_sda": "PA08",
             "cryptoauthlib.i2c_scl": "PA09"
         }
-    }
+    },
+    "macros": ["ATCAPRINTF"]
 }
