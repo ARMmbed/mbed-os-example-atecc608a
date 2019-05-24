@@ -99,13 +99,15 @@ psa_status_t atecc608a_print_locked_zones()
 psa_status_t atecc608a_print_serial_number()
 {
     uint8_t serial[ATCA_SERIAL_NUM_SIZE];
+    size_t buffer_length;
 
-    if(atecc608a_get_serial_number(serial, ATCA_SERIAL_NUM_SIZE) != PSA_SUCCESS)
+    if(atecc608a_get_serial_number(serial, ATCA_SERIAL_NUM_SIZE,
+                                   &buffer_length) != PSA_SUCCESS)
     {
         return PSA_ERROR_HARDWARE_FAILURE;
     }
     printf("Serial Number:\n");
-    atcab_printbin_sp(serial, ATCA_SERIAL_NUM_SIZE);
+    atcab_printbin_sp(serial, buffer_length);
     printf("\n");
     return PSA_SUCCESS;
 }
