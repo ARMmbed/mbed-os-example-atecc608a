@@ -17,4 +17,4 @@ if [ ! -d TARGET_IGNORE/mbed-crypto ]; then
     make update
 fi
 make
-#cd $curdir
+

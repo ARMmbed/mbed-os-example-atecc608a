@@ -67,7 +67,7 @@
         status = PSA_SUCCESS;                                       \
     } while(0)
 
-/** Check if an ATCA operation is succesfull, translate the error otherwise. */
+/** Check if an ATCA operation is successful, translate the error otherwise. */
 #define ASSERT_SUCCESS(expression) ASSERT_STATUS(expression, ATCA_SUCCESS, \
                                       atecc608a_to_psa_error(ASSERT_result))
 
