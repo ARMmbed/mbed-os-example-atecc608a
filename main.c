@@ -22,94 +22,87 @@
 #if defined(ATCA_HAL_I2C)
 #include "psa/crypto.h"
 #include "atecc608a_se.h"
-#include "atca_status.h"
-#include "atca_devtypes.h"
-#include "atca_iface.h"
-#include "atca_command.h"
-#include "atca_basic.h"
+#include "atecc608a_utils.h"
 #include "atca_helpers.h"
 
-#define ASSERT_STATUS(actual, expected)                             \
-    do                                                              \
-    {                                                               \
-        int ASSERT_STATUS_actual = (actual);                        \
-        int ASSERT_STATUS_expected = (expected);                    \
-        if ((ASSERT_STATUS_actual) != (ASSERT_STATUS_expected))     \
-        {                                                           \
-            printf("assertion failed at %s:%d "                     \
-                   "(actual=%d expected=%d)\n", __FILE__, __LINE__, \
-                    ASSERT_STATUS_actual, ASSERT_STATUS_expected);  \
-            return -1;                                              \
-        }                                                           \
-    } while(0)
-
-extern ATCAIfaceCfg atca_iface_config;
 static const uint8_t hash_input1[] = "abc";
 /* SHA-256 hash of ['a','b','c'] */
 static const uint8_t sha256_expected_hash1[] = {
-    0xBA, 0x78, 0x16, 0xBF, 0x8F, 0x01, 0xCF, 0xEA, 0x41, 0x41, 0x40, 0xDE, 0x5D, 0xAE, 0x22, 0x23,
-    0xB0, 0x03, 0x61, 0xA3, 0x96, 0x17, 0x7A, 0x9C, 0xB4, 0x10, 0xFF, 0x61, 0xF2, 0x00, 0x15, 0xAD
+    0xBA, 0x78, 0x16, 0xBF, 0x8F, 0x01, 0xCF, 0xEA,
+    0x41, 0x41, 0x40, 0xDE, 0x5D, 0xAE, 0x22, 0x23,
+    0xB0, 0x03, 0x61, 0xA3, 0x96, 0x17, 0x7A, 0x9C,
+    0xB4, 0x10, 0xFF, 0x61, 0xF2, 0x00, 0x15, 0xAD
 };
 
 static const uint8_t hash_input2[] = "";
 /* SHA-256 hash of an empty string */
 static const uint8_t sha256_expected_hash2[] = {
-    0xe3, 0xb0, 0xc4, 0x42, 0x98, 0xfc, 0x1c, 0x14, 0x9a, 0xfb, 0xf4, 0xc8,  0x99, 0x6f, 0xb9, 0x24,
-    0x27, 0xae, 0x41, 0xe4, 0x64, 0x9b, 0x93, 0x4c, 0xa4, 0x95, 0x99, 0x1b, 0x78, 0x52, 0xb8, 0x55
+    0xe3, 0xb0, 0xc4, 0x42, 0x98, 0xfc, 0x1c, 0x14,
+    0x9a, 0xfb, 0xf4, 0xc8, 0x99, 0x6f, 0xb9, 0x24,
+    0x27, 0xae, 0x41, 0xe4, 0x64, 0x9b, 0x93, 0x4c,
+    0xa4, 0x95, 0x99, 0x1b, 0x78, 0x52, 0xb8, 0x55
 };
 
 
 psa_status_t atecc608a_hash_sha256(const uint8_t *input, size_t input_size,
-                                   const uint8_t *expected_hash, size_t expected_hash_size)
+                                   const uint8_t *expected_hash,
+                                   size_t expected_hash_size)
 {
+    psa_status_t status = PSA_ERROR_GENERIC_ERROR;
     uint8_t actual_hash[ATCA_SHA_DIGEST_SIZE] = {0};
 
     printf("SHA-256:\n\n");
     atcab_printbin_label("Input: ", (uint8_t *)input, input_size);
-    atcab_printbin_label("Expected Hash: ", (uint8_t *)expected_hash, expected_hash_size);
-    ASSERT_STATUS(atcab_init(&atca_iface_config), ATCA_SUCCESS);
-    ASSERT_STATUS(atcab_hw_sha2_256(input, input_size, actual_hash), ATCA_SUCCESS);
-    ASSERT_STATUS(atcab_release(), ATCA_SUCCESS);
+    atcab_printbin_label("Expected Hash: ", (uint8_t *)expected_hash,
+                         expected_hash_size);
+    ATCAB_INIT();
+    ASSERT_SUCCESS(atcab_hw_sha2_256(input, input_size, actual_hash));
     atcab_printbin_label("Actual Hash: ", actual_hash, ATCA_SHA_DIGEST_SIZE);
-    ASSERT_STATUS(memcmp(actual_hash, expected_hash, sizeof(actual_hash)), 0);
+    ASSERT_STATUS(memcmp(actual_hash, expected_hash, sizeof(actual_hash)), 0,
+                         PSA_ERROR_HARDWARE_FAILURE);
     printf("Success!\n\n");
 
-    return 0;
+exit:
+    ATCAB_DEINIT();
+    return status;
 }
 
 psa_status_t atecc608a_print_locked_zones()
 {
+    psa_status_t status = PSA_ERROR_GENERIC_ERROR;
     bool locked;
     printf("--- Device locks information ---\n");
-    ASSERT_STATUS(atcab_init(&atca_iface_config), ATCA_SUCCESS);
-    ASSERT_STATUS(atcab_is_locked(LOCK_ZONE_CONFIG, &locked), ATCA_SUCCESS);
+    ATCAB_INIT();
+    ASSERT_SUCCESS(atcab_is_locked(LOCK_ZONE_CONFIG, &locked));
     printf("  - Config locked: %d\n", locked);
-    ASSERT_STATUS(atcab_is_locked(LOCK_ZONE_DATA, &locked), ATCA_SUCCESS);
+    ASSERT_SUCCESS(atcab_is_locked(LOCK_ZONE_DATA, &locked));
     printf("  - Data locked: %d\n", locked);
     for(uint8_t i=0; i < 16; i++)
     {
-        ASSERT_STATUS(atcab_is_slot_locked(i, &locked), ATCA_SUCCESS);
+        ASSERT_SUCCESS(atcab_is_slot_locked(i, &locked));
         printf("  - Slot %d locked: %d\n", i, locked);
     }
-    ASSERT_STATUS(atcab_release(), ATCA_SUCCESS);
     printf("--------------------------------\n");
-    return PSA_SUCCESS;
+    
+exit:
+    ATCAB_DEINIT();
+    return status;
 }
 
 psa_status_t atecc608a_print_serial_number()
 {
+    psa_status_t status = PSA_ERROR_GENERIC_ERROR;
     uint8_t serial[ATCA_SERIAL_NUM_SIZE];
     size_t buffer_length;
 
-    if(atecc608a_get_serial_number(serial, ATCA_SERIAL_NUM_SIZE,
-                                   &buffer_length) != PSA_SUCCESS)
-    {
-        return PSA_ERROR_HARDWARE_FAILURE;
-    }
+    ASSERT_SUCCESS_PSA(atecc608a_get_serial_number(serial,
+                                                   ATCA_SERIAL_NUM_SIZE,
+                                                   &buffer_length));
     printf("Serial Number:\n");
     atcab_printbin_sp(serial, buffer_length);
     printf("\n");
-    return PSA_SUCCESS;
+exit:
+    return status;
 }
 
 int main(void)
@@ -141,48 +134,49 @@ int main(void)
 
     atecc608a_print_serial_number();
 
-    atecc608a_hash_sha256(hash_input1, sizeof(hash_input1) - 1,
-                          sha256_expected_hash1, sizeof(sha256_expected_hash1));
+    ASSERT_SUCCESS_PSA(atecc608a_hash_sha256(hash_input1,
+                                             sizeof(hash_input1) - 1,
+                                             sha256_expected_hash1,
+                                             sizeof(sha256_expected_hash1)));
 
-    atecc608a_hash_sha256(hash_input2, sizeof(hash_input2) - 1,
-                          sha256_expected_hash2, sizeof(sha256_expected_hash2));
+    ASSERT_SUCCESS_PSA(atecc608a_hash_sha256(hash_input2,
+                                             sizeof(hash_input2) - 1,
+                                             sha256_expected_hash2,
+                                             sizeof(sha256_expected_hash2)));
 
-    status = psa_crypto_init();
-    ASSERT_STATUS(status, PSA_SUCCESS);
+    ASSERT_SUCCESS_PSA(psa_crypto_init());
 
     atecc608a_print_locked_zones();
     /* Verify that the device has a locked config before doing anything */
-    ASSERT_STATUS(atecc608a_check_config_locked(), PSA_SUCCESS);
+    ASSERT_SUCCESS_PSA(atecc608a_check_config_locked());
 
-    status = atecc608a_export_public_key(atecc608a_key_slot_device, pubkey,
-                                         sizeof(pubkey), &pubkey_len);
-    ASSERT_STATUS(status, PSA_SUCCESS);
+    ASSERT_SUCCESS_PSA((*atecc608a_drv_info.p_key_management->p_export)
+                        (atecc608a_key_slot_device, pubkey, sizeof(pubkey),
+                         &pubkey_len));
 
-    status = atecc608a_asymmetric_sign(atecc608a_key_slot_device, alg, hash,
-                                       sizeof(hash), signature,
-                                       sizeof(signature), &signature_length);
-    ASSERT_STATUS(status, PSA_SUCCESS);
+    ASSERT_SUCCESS_PSA((*atecc608a_drv_info.p_asym->p_sign)
+                        (atecc608a_key_slot_device, alg, hash, sizeof(hash),
+                         signature, sizeof(signature), &signature_length));
 
     /*
      * Import the secure element's public key into a volatile key slot.
      */
-    status = psa_allocate_key(&verify_handle);
-    ASSERT_STATUS(status, PSA_SUCCESS);
+    ASSERT_SUCCESS_PSA(psa_allocate_key(&verify_handle));
 
     psa_key_policy_set_usage(&policy, PSA_KEY_USAGE_VERIFY, alg);
-    status = psa_set_key_policy(verify_handle, &policy);
-    ASSERT_STATUS(status, PSA_SUCCESS);
+    ASSERT_SUCCESS_PSA(psa_set_key_policy(verify_handle, &policy));
 
-    status = psa_import_key(verify_handle, key_type, pubkey, pubkey_len);
-    ASSERT_STATUS(status, PSA_SUCCESS);
+    ASSERT_SUCCESS_PSA(psa_import_key(verify_handle, key_type, pubkey,
+                                      pubkey_len));
 
     /* Verify that the signature produced by the secure element is valid. */
-    status = psa_asymmetric_verify(verify_handle, alg, hash, sizeof(hash),
-                                   signature, signature_length);
-    ASSERT_STATUS(status, PSA_SUCCESS);
+    ASSERT_SUCCESS_PSA(psa_asymmetric_verify(verify_handle, alg, hash,
+                                             sizeof(hash), signature,
+                                             signature_length));
 
     printf("Verification successful!\n");
-    return 0;
+    exit:
+        return status;
 }
 #else
 int main(void)
