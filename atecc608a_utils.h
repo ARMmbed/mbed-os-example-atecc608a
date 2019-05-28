@@ -23,28 +23,8 @@
 #ifndef ATECC608A_UTILS_H
 #define ATECC608A_UTILS_H
 
-#include "atca_iface.h"
 #include "psa/crypto.h"
-
-#define ATCAB_INIT()                                        \
-    do                                                      \
-    {                                                       \
-        if (atcab_init(&atca_iface_config) != ATCA_SUCCESS) \
-        {                                                   \
-            status = PSA_ERROR_HARDWARE_FAILURE;            \
-            goto exit;                                      \
-        }                                                   \
-    } while(0)
-
-/** `atcab_release()` might return `ATCA_BAD_PARAM` if there is no global device
- *  initialized via `atcab_init()`. HAL might return an error if an i2c device
- *  cannot be released, but in current implementations it always returns
- *  `ATCA_SUCCESS` - therefore we are ignoring the return code. */
-#define ATCAB_DEINIT()    \
-    do                    \
-    {                     \
-        atcab_release();  \
-    } while(0)
+#include "atecc608a_se.h"
 
 /** This macro checks if the result of an `expression` is equal to an
  *  `expected` value and sets a `status` variable of type `psa_status_t` to
@@ -75,12 +55,9 @@
  *  the PSA return code - PSA_SUCCESS.*/
 #define ASSERT_SUCCESS_PSA(expression) ASSERT_STATUS(expression, PSA_SUCCESS, \
                                                      ASSERT_result)
-                                      
+
 psa_status_t atecc608a_get_serial_number(uint8_t* buffer, size_t buffer_size,
                                          size_t *buffer_length);
 psa_status_t atecc608a_check_config_locked();
-psa_status_t atecc608a_to_psa_error(ATCA_STATUS ret);
-
-extern ATCAIfaceCfg atca_iface_config;
 
 #endif /* ATECC608A_SE_H */
