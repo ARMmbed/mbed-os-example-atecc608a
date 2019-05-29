@@ -1,9 +1,15 @@
-### Install mbed-cli to a venv
+### Install mbed-cli
 
-Install mbed-cli to a virtual environment, so that all the things mbed-cli
+You can either install the mbed-cli directly, running:
+
+```sh
+pip install --user mbed-cli
+```
+
+or use a virtual environment, so that all the things mbed-cli
 installs automatically don't interfere with other things you have installed as
 part of your main environment (which may be managed by your package manager,
-etc.).
+etc.):
 
 ```sh
 virtualenv venvs/mbed
@@ -13,15 +19,8 @@ pip install mbed-cli
 
 ### Install the GCC_ARM toolchain
 
-We'll install arm-none-eabi-gcc to `/opt`. You may want to use `~/.local` or
-some other place. Where doesn't matter too much, so long as its in your `$PATH`.
-
-```sh
-wget -q https://developer.arm.com/-/media/Files/downloads/gnu-rm/5_4-2016q3/gcc-arm-none-eabi-5_4-2016q3-20160926-linux.tar.bz2 -O gcc-arm-none-eabi-5_4-2016q3-20160926-linux.tar.bz2 && tar -xjf gcc-arm-none-eabi-5_4-2016q3-20160926-linux.tar.bz2 -C /opt
-rm gcc-arm-none-eabi-5_4-2016q3-20160926-linux.tar.bz2
-```
-
-Remember to add `/opt/gcc-arm-none-eabi-5.4-2016q3/bin` to your `$PATH`.
+You can download the newest version of arm-none-eabi-ggc here: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads
+Follow the `readme.txt` for detailed installation instructions.
 
 ### Install the ATECC608A example
 
