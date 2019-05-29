@@ -55,7 +55,7 @@ psa_status_t atecc608a_hash_sha256(const uint8_t *input, size_t input_size,
     atcab_printbin_label("Input: ", (uint8_t *)input, input_size);
     atcab_printbin_label("Expected Hash: ", (uint8_t *)expected_hash,
                          expected_hash_size);
-    ATCAB_INIT();
+    ASSERT_SUCCESS_PSA(atecc608a_init());
     ASSERT_SUCCESS(atcab_hw_sha2_256(input, input_size, actual_hash));
     atcab_printbin_label("Actual Hash: ", actual_hash, ATCA_SHA_DIGEST_SIZE);
     ASSERT_STATUS(memcmp(actual_hash, expected_hash, sizeof(actual_hash)), 0,
@@ -63,7 +63,7 @@ psa_status_t atecc608a_hash_sha256(const uint8_t *input, size_t input_size,
     printf("Success!\n\n");
 
 exit:
-    ATCAB_DEINIT();
+    atecc608a_deinit();
     return status;
 }
 
@@ -72,7 +72,7 @@ psa_status_t atecc608a_print_locked_zones()
     psa_status_t status = PSA_ERROR_GENERIC_ERROR;
     bool locked;
     printf("--- Device locks information ---\n");
-    ATCAB_INIT();
+    ASSERT_SUCCESS_PSA(atecc608a_init());
     ASSERT_SUCCESS(atcab_is_locked(LOCK_ZONE_CONFIG, &locked));
     printf("  - Config locked: %d\n", locked);
     ASSERT_SUCCESS(atcab_is_locked(LOCK_ZONE_DATA, &locked));
@@ -83,9 +83,9 @@ psa_status_t atecc608a_print_locked_zones()
         printf("  - Slot %d locked: %d\n", i, locked);
     }
     printf("--------------------------------\n");
-    
+
 exit:
-    ATCAB_DEINIT();
+    atecc608a_deinit();
     return status;
 }
 
@@ -150,12 +150,12 @@ int main(void)
     /* Verify that the device has a locked config before doing anything */
     ASSERT_SUCCESS_PSA(atecc608a_check_config_locked());
 
-    ASSERT_SUCCESS_PSA((*atecc608a_drv_info.p_key_management->p_export)
-                        (atecc608a_key_slot_device, pubkey, sizeof(pubkey),
+    ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_key_management->p_export(
+                         atecc608a_key_slot_device, pubkey, sizeof(pubkey),
                          &pubkey_len));
 
-    ASSERT_SUCCESS_PSA((*atecc608a_drv_info.p_asym->p_sign)
-                        (atecc608a_key_slot_device, alg, hash, sizeof(hash),
+    ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_asym->p_sign(
+                         atecc608a_key_slot_device, alg, hash, sizeof(hash),
                          signature, sizeof(signature), &signature_length));
 
     /*

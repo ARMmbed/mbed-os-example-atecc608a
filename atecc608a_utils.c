@@ -34,13 +34,13 @@ psa_status_t atecc608a_get_serial_number(uint8_t* buffer,
         return PSA_ERROR_BUFFER_TOO_SMALL;
     }
 
-    ATCAB_INIT();
+    ASSERT_SUCCESS_PSA(atecc608a_init());
 
     ASSERT_SUCCESS(atcab_read_serial_number(buffer));
     *buffer_length = ATCA_SERIAL_NUM_SIZE;
 
 exit:
-    ATCAB_DEINIT();
+    atecc608a_deinit();
     return status;
 }
 
@@ -48,16 +48,16 @@ psa_status_t atecc608a_check_config_locked()
 {
     bool config_locked;
     psa_status_t status = PSA_ERROR_GENERIC_ERROR;
-    
-    ATCAB_INIT();
+
+    ASSERT_SUCCESS_PSA(atecc608a_init());
 
     ASSERT_SUCCESS(atcab_is_locked(LOCK_ZONE_CONFIG, &config_locked));
 
 exit:
-    ATCAB_DEINIT();
+    atecc608a_deinit();
     if (status == PSA_SUCCESS)
     {
         status = config_locked? PSA_SUCCESS : PSA_ERROR_HARDWARE_FAILURE;
     }
-    return status;        
+    return status;
 }

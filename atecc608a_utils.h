@@ -19,7 +19,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
- 
+
 #ifndef ATECC608A_UTILS_H
 #define ATECC608A_UTILS_H
 
@@ -58,6 +58,7 @@
 
 psa_status_t atecc608a_get_serial_number(uint8_t* buffer, size_t buffer_size,
                                          size_t *buffer_length);
+
 psa_status_t atecc608a_check_config_locked();
 
 #endif /* ATECC608A_SE_H */
