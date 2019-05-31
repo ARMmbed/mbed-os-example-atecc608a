@@ -171,12 +171,11 @@ int main(void)
                          atecc608a_key_slot_device, pubkey, sizeof(pubkey),
                          &pubkey_len));
 
-    /* Import a subset of the key, omitting the 0x04 prefix - only raw X & Y */
     ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_key_management->p_import(
                          atecc608a_public_key_slot,
                          atecc608a_drv_info.lifetime,
-                         key_type, alg, PSA_KEY_USAGE_VERIFY, pubkey+1,
-                         pubkey_len-1));
+                         key_type, alg, PSA_KEY_USAGE_VERIFY, pubkey,
+                         pubkey_len));
 
     ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_asym->p_sign(
                          atecc608a_key_slot_device, alg, hash, sizeof(hash),
