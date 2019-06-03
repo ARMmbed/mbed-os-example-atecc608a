@@ -147,7 +147,7 @@ int main(void)
 
     atecc608a_print_serial_number();
     atecc608a_print_config_zone();
-    ASSERT_SUCCESS_PSA(atecc608a_generate_key(0, pubkey, pubkey_size));
+    ASSERT_SUCCESS_PSA(atecc608a_generate_key(atecc608a_key_slot_device, pubkey, pubkey_size));
     atcab_printbin_label("pubKey generated: ", pubkey, ATCA_PUB_KEY_SIZE);
 
     ASSERT_SUCCESS_PSA(atecc608a_hash_sha256(hash_input1,
