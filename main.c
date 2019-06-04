@@ -105,6 +105,18 @@ exit:
     return status;
 }
 
+psa_status_t atecc608a_print_config_zone()
+{
+    uint8_t config_buffer[ATCA_ECC_CONFIG_SIZE] = {0};
+    psa_status_t status = PSA_ERROR_GENERIC_ERROR;
+    ASSERT_SUCCESS_PSA(atecc608a_init());
+    ASSERT_SUCCESS(atcab_read_config_zone(config_buffer));
+    atcab_printbin_label("Config zone: ", config_buffer, ATCA_ECC_CONFIG_SIZE);
+exit:
+    atecc608a_deinit();
+    return status;
+}
+
 int main(void)
 {
     enum {
@@ -131,8 +143,12 @@ int main(void)
     static uint8_t pubkey[pubkey_size];
     size_t pubkey_len = 0;
     psa_key_slot_number_t atecc608a_key_slot_device = 0;
+    psa_key_slot_number_t atecc608a_public_key_slot = 9;
 
     atecc608a_print_serial_number();
+    atecc608a_print_config_zone();
+    ASSERT_SUCCESS_PSA(atecc608a_generate_key(atecc608a_key_slot_device, pubkey, pubkey_size));
+    atcab_printbin_label("pubKey generated: ", pubkey, ATCA_PUB_KEY_SIZE);
 
     ASSERT_SUCCESS_PSA(atecc608a_hash_sha256(hash_input1,
                                              sizeof(hash_input1) - 1,
@@ -147,6 +163,7 @@ int main(void)
     ASSERT_SUCCESS_PSA(psa_crypto_init());
 
     atecc608a_print_locked_zones();
+
     /* Verify that the device has a locked config before doing anything */
     ASSERT_SUCCESS_PSA(atecc608a_check_config_locked());
 
@@ -154,10 +171,19 @@ int main(void)
                          atecc608a_key_slot_device, pubkey, sizeof(pubkey),
                          &pubkey_len));
 
+    ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_key_management->p_import(
+                         atecc608a_public_key_slot,
+                         atecc608a_drv_info.lifetime,
+                         key_type, alg, PSA_KEY_USAGE_VERIFY, pubkey,
+                         pubkey_len));
+
     ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_asym->p_sign(
                          atecc608a_key_slot_device, alg, hash, sizeof(hash),
                          signature, sizeof(signature), &signature_length));
 
+    ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_asym->p_verify(
+                         atecc608a_public_key_slot, alg, hash, sizeof(hash),
+                         signature, signature_length));
     /*
      * Import the secure element's public key into a volatile key slot.
      */

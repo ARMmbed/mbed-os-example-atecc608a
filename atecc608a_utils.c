@@ -23,7 +23,7 @@
 
 #include "atca_basic.h"
 
-psa_status_t atecc608a_get_serial_number(uint8_t* buffer,
+psa_status_t atecc608a_get_serial_number(uint8_t *buffer,
                                          size_t buffer_size,
                                          size_t *buffer_length)
 {
@@ -59,5 +59,21 @@ exit:
     {
         status = config_locked? PSA_SUCCESS : PSA_ERROR_HARDWARE_FAILURE;
     }
+    return status;
+}
+
+psa_status_t atecc608a_generate_key(uint16_t slot, uint8_t *pubkey, size_t pubkey_size)
+{
+    psa_status_t status = PSA_ERROR_GENERIC_ERROR;
+    if (pubkey != NULL && pubkey_size < ATCA_PUB_KEY_SIZE)
+    {
+       return PSA_ERROR_BUFFER_TOO_SMALL;
+    }
+
+    ASSERT_SUCCESS_PSA(atecc608a_init());
+    ASSERT_SUCCESS(atcab_genkey(slot, pubkey));
+
+exit:
+    atecc608a_deinit();
     return status;
 }
