@@ -61,6 +61,4 @@ psa_status_t atecc608a_get_serial_number(uint8_t *buffer, size_t buffer_size,
 
 psa_status_t atecc608a_check_config_locked();
 
-psa_status_t atecc608a_generate_key(uint16_t slot, uint8_t *pubkey, size_t pubkey_size);
-
 #endif /* ATECC608A_SE_H */
