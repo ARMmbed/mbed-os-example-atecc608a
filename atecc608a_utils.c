@@ -61,3 +61,20 @@ exit:
     }
     return status;
 }
+
+psa_status_t atecc608a_random(uint8_t *rand_out)
+{
+    psa_status_t status = PSA_ERROR_GENERIC_ERROR;
+
+    if (rand_out == NULL)
+    {
+        return PSA_ERROR_INVALID_ARGUMENT;
+    }
+
+    ASSERT_SUCCESS_PSA(atecc608a_init());
+    ASSERT_SUCCESS(atcab_random(rand_out));
+
+exit:
+    atecc608a_deinit();
+    return status;
+}

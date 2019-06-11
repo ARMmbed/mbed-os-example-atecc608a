@@ -61,4 +61,7 @@ psa_status_t atecc608a_get_serial_number(uint8_t *buffer, size_t buffer_size,
 
 psa_status_t atecc608a_check_config_locked();
 
+/** Generate a 32 byte random number from the CryptoAuth device. */
+psa_status_t atecc608a_random(uint8_t *rand_out);
+
 #endif /* ATECC608A_SE_H */

@@ -117,6 +117,24 @@ exit:
     return status;
 }
 
+#define TEST_WRITE_READ_SIZE 32
+psa_status_t test_write_read_slot(uint16_t slot)
+{
+    psa_status_t status = PSA_ERROR_GENERIC_ERROR;
+    uint8_t data_write[TEST_WRITE_READ_SIZE] = {};
+    uint8_t data_read[TEST_WRITE_READ_SIZE] = {};
+
+    ASSERT_SUCCESS_PSA(atecc608a_random(data_write));
+    ASSERT_SUCCESS_PSA(atecc608a_write(slot, 0, data_write, TEST_WRITE_READ_SIZE));
+    ASSERT_SUCCESS_PSA(atecc608a_read(slot, 0, data_read, TEST_WRITE_READ_SIZE));
+    ASSERT_STATUS(memcmp(data_write, data_read, TEST_WRITE_READ_SIZE),
+                  0, PSA_ERROR_HARDWARE_FAILURE);
+
+    printf("test_write_read_slot succesful!\n");
+exit:
+    return status;
+}
+
 int main(void)
 {
     enum {
@@ -164,6 +182,8 @@ int main(void)
 
     /* Verify that the device has a locked config before doing anything */
     ASSERT_SUCCESS_PSA(atecc608a_check_config_locked());
+
+    test_write_read_slot(8);
 
     /* Test that a public key received during a private key generation
      * can be imported */
