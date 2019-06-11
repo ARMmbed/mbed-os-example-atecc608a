@@ -148,13 +148,6 @@ int main(void)
     atecc608a_print_serial_number();
     atecc608a_print_config_zone();
 
-    ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_key_management->p_generate(
-                         atecc608a_key_slot_device, keypair_type,
-                         PSA_KEY_USAGE_SIGN | PSA_KEY_USAGE_VERIFY,
-                         key_bits, NULL, 0, pubkey, pubkey_size, &pubkey_len));
-
-    atcab_printbin_label("pubKey generated: ", pubkey, pubkey_len);
-
     ASSERT_SUCCESS_PSA(atecc608a_hash_sha256(hash_input1,
                                              sizeof(hash_input1) - 1,
                                              sha256_expected_hash1,
@@ -172,6 +165,21 @@ int main(void)
     /* Verify that the device has a locked config before doing anything */
     ASSERT_SUCCESS_PSA(atecc608a_check_config_locked());
 
+    /* Test that a public key received during a private key generation
+     * can be imported */
+    ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_key_management->p_generate(
+                         atecc608a_key_slot_device, keypair_type,
+                         PSA_KEY_USAGE_SIGN | PSA_KEY_USAGE_VERIFY,
+                         key_bits, NULL, 0, pubkey, pubkey_size, &pubkey_len));
+
+    ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_key_management->p_import(
+                         atecc608a_public_key_slot,
+                         atecc608a_drv_info.lifetime,
+                         key_type, alg, PSA_KEY_USAGE_VERIFY, pubkey,
+                         pubkey_len));
+
+    /* Test that a public key that is exported from a private key - can be
+     * imported */
     ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_key_management->p_export(
                          atecc608a_key_slot_device, pubkey, sizeof(pubkey),
                          &pubkey_len));
@@ -182,6 +190,8 @@ int main(void)
                          key_type, alg, PSA_KEY_USAGE_VERIFY, pubkey,
                          pubkey_len));
 
+    /* Test that signing using the generated private key and verifying using
+     * the exported public key works */
     ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_asym->p_sign(
                          atecc608a_key_slot_device, alg, hash, sizeof(hash),
                          signature, sizeof(signature), &signature_length));
@@ -189,6 +199,7 @@ int main(void)
     ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_asym->p_verify(
                          atecc608a_public_key_slot, alg, hash, sizeof(hash),
                          signature, signature_length));
+
     /*
      * Import the secure element's public key into a volatile key slot.
      */
