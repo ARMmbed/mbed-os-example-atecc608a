@@ -44,21 +44,39 @@ exit:
     return status;
 }
 
-psa_status_t atecc608a_check_config_locked()
+psa_status_t atecc608a_check_zone_locked(uint8_t zone)
 {
-    bool config_locked;
+    bool zone_locked;
     psa_status_t status = PSA_ERROR_GENERIC_ERROR;
 
     ASSERT_SUCCESS_PSA(atecc608a_init());
 
-    ASSERT_SUCCESS(atcab_is_locked(LOCK_ZONE_CONFIG, &config_locked));
+    ASSERT_SUCCESS(atcab_is_locked(zone, &zone_locked));
 
 exit:
     atecc608a_deinit();
     if (status == PSA_SUCCESS)
     {
-        status = config_locked? PSA_SUCCESS : PSA_ERROR_HARDWARE_FAILURE;
+        status = zone_locked? PSA_SUCCESS : PSA_ERROR_HARDWARE_FAILURE;
     }
+    return status;
+}
+
+psa_status_t atecc608a_lock_data_zone()
+{
+    psa_status_t status = PSA_ERROR_GENERIC_ERROR;
+    bool zone_locked;
+
+    ASSERT_SUCCESS_PSA(atecc608a_init());
+    ASSERT_SUCCESS(atcab_is_locked(LOCK_ZONE_DATA, &zone_locked));
+    if (zone_locked)
+    {
+        return PSA_ERROR_HARDWARE_FAILURE;
+    }
+    ASSERT_SUCCESS(atcab_lock_data_zone());
+
+exit:
+    atecc608a_deinit();
     return status;
 }
 
