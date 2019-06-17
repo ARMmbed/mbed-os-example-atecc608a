@@ -178,7 +178,7 @@ int main(void)
                          key_type, alg, PSA_KEY_USAGE_VERIFY, pubkey,
                          pubkey_len));
 
-    /* Test that a public key that is exported from a private key - can be
+    /* Test that a public key that is exported from a private key can be
      * imported */
     ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_key_management->p_export(
                          atecc608a_key_slot_device, pubkey, sizeof(pubkey),
