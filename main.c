@@ -26,6 +26,27 @@
 #include "atecc608a_utils.h"
 #include "atca_helpers.h"
 
+/** This macro checks if the result of an `expression` is equal to an
+ *  `expected` value and sets a `status` variable of type `psa_status_t` to
+ *  `PSA_SUCCESS`. If they are not equal, the `status` is set to
+ *  `psa_error instead`, the error details are printed, and the code jumps
+ *  to the `exit` label. */
+#define ASSERT_STATUS_PSA(expression, expected, psa_error)            \
+    do                                                                \
+    {                                                                 \
+        psa_status_t ASSERT_result = (expression);                    \
+        psa_status_t ASSERT_expected = (expected);                    \
+        if ((ASSERT_result) != (ASSERT_expected))                     \
+        {                                                             \
+            printf("assertion failed at %s:%d "                       \
+                   "(actual=%ld expected=%ld)\n", __FILE__, __LINE__, \
+                   ASSERT_result, ASSERT_expected);                   \
+            status = (psa_error);                                     \
+            goto exit;                                                \
+        }                                                             \
+        status = PSA_SUCCESS;                                         \
+    } while(0)
+
 #define USAGE \
     "\n\nAvailable commands:\n"       \
     " - info - print configuration information;\n" \
@@ -194,10 +215,66 @@ psa_status_t test_psa_import_verify()
  * be imported. */
 psa_status_t test_generate_import()
 {
+    /* Valid values */
     psa_status_t status;
     static uint8_t pubkey[pubkey_size];
     size_t pubkey_len = 0;
 
+    /* Invalid values */
+    const uint16_t bad_key_id = 16;
+    const psa_key_type_t bad_key_type = PSA_KEY_TYPE_RSA_PUBLIC_KEY;
+    const size_t bad_key_bits = 5;
+    const size_t bad_buffer_size = 64;
+
+    /* Passing an invalid key slot should fail. */
+    ASSERT_STATUS_PSA(atecc608a_drv_info.p_key_management->p_generate(
+                         bad_key_id, keypair_type,
+                         PSA_KEY_USAGE_SIGN | PSA_KEY_USAGE_VERIFY,
+                         key_bits, NULL, 0, pubkey, pubkey_size, &pubkey_len),
+                  PSA_ERROR_INVALID_ARGUMENT,
+                  PSA_ERROR_HARDWARE_FAILURE);
+
+    /* Passing an invalid key type should fail. */
+    ASSERT_STATUS_PSA(atecc608a_drv_info.p_key_management->p_generate(
+                         atecc608a_private_key_slot, bad_key_type,
+                         PSA_KEY_USAGE_SIGN | PSA_KEY_USAGE_VERIFY,
+                         key_bits, NULL, 0, pubkey, pubkey_size,
+                         &pubkey_len),
+                  PSA_ERROR_NOT_SUPPORTED,
+                  PSA_ERROR_HARDWARE_FAILURE);
+
+    /* Passing invalid key bits should fail. */
+    ASSERT_STATUS_PSA(atecc608a_drv_info.p_key_management->p_generate(
+                         atecc608a_private_key_slot, keypair_type,
+                         PSA_KEY_USAGE_SIGN | PSA_KEY_USAGE_VERIFY,
+                         bad_key_bits, NULL, 0, pubkey, pubkey_size,
+                         &pubkey_len),
+                  PSA_ERROR_NOT_SUPPORTED,
+                  PSA_ERROR_HARDWARE_FAILURE);
+
+    /* Passing an invalid size should fail. */
+    ASSERT_STATUS_PSA(atecc608a_drv_info.p_key_management->p_generate(
+                         atecc608a_private_key_slot, keypair_type,
+                         PSA_KEY_USAGE_SIGN | PSA_KEY_USAGE_VERIFY,
+                         key_bits, NULL, 0, pubkey, bad_buffer_size,
+                         &pubkey_len),
+                  PSA_ERROR_BUFFER_TOO_SMALL,
+                  PSA_ERROR_HARDWARE_FAILURE);
+
+    /* Passing a NULL public key buffer should work, regardless of its size. */
+    ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_key_management->p_generate(
+                         atecc608a_private_key_slot, keypair_type,
+                         PSA_KEY_USAGE_SIGN | PSA_KEY_USAGE_VERIFY,
+                         key_bits, NULL, 0, NULL, pubkey_size, &pubkey_len));
+
+    /* Passing a NULL pubkey_len should work, even when exporting a public key. */
+    ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_key_management->p_generate(
+                         atecc608a_private_key_slot, keypair_type,
+                         PSA_KEY_USAGE_SIGN | PSA_KEY_USAGE_VERIFY,
+                         key_bits, NULL, 0, pubkey, pubkey_size, NULL));
+
+    /* Test that a public key received during a private key generation
+     * can be imported. */
     ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_key_management->p_generate(
                          atecc608a_private_key_slot, keypair_type,
                          PSA_KEY_USAGE_SIGN | PSA_KEY_USAGE_VERIFY,
@@ -208,6 +285,16 @@ psa_status_t test_generate_import()
                          atecc608a_drv_info.lifetime,
                          key_type, alg, PSA_KEY_USAGE_VERIFY, pubkey,
                          pubkey_len));
+
+    /* Importing with a bad size should fail. */
+    ASSERT_STATUS_PSA(atecc608a_drv_info.p_key_management->p_import(
+                         atecc608a_public_key_slot,
+                         atecc608a_drv_info.lifetime,
+                         key_type, alg, PSA_KEY_USAGE_VERIFY, pubkey,
+                         0),
+                  PSA_ERROR_INVALID_ARGUMENT,
+                  PSA_ERROR_HARDWARE_FAILURE);
+
 
     printf("test_generate_import succesful!\n");
     exit:
@@ -340,7 +427,7 @@ void print_device_info()
     atecc608a_print_serial_number();
     atecc608a_print_config_zone();
     atecc608a_print_locked_zones();
-    printf("\nPrivate key slot in use: %u, public: %u\n",
+    printf("\nPrivate key slot in use: %lu, public: %lu\n",
            atecc608a_private_key_slot, atecc608a_public_key_slot);
 }
 
