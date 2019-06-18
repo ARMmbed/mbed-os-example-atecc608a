@@ -597,6 +597,8 @@ int main(void)
 {
     psa_status_t status;
     bool exit_application = false;
+
+    print_device_info();
     ASSERT_SUCCESS_PSA(psa_crypto_init());
     run_tests();
 
