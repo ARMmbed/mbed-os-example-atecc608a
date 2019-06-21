@@ -62,13 +62,18 @@ exit:
     return status;
 }
 
-psa_status_t atecc608a_random(uint8_t *rand_out)
+psa_status_t atecc608a_random_32_bytes(uint8_t *rand_out, size_t buffer_size)
 {
     psa_status_t status = PSA_ERROR_GENERIC_ERROR;
 
     if (rand_out == NULL)
     {
         return PSA_ERROR_INVALID_ARGUMENT;
+    }
+
+    if (buffer_size < 32)
+    {
+        return PSA_ERROR_BUFFER_TOO_SMALL;
     }
 
     ASSERT_SUCCESS_PSA(atecc608a_init());

@@ -124,7 +124,7 @@ psa_status_t test_write_read_slot(uint16_t slot)
     uint8_t data_write[TEST_WRITE_READ_SIZE] = {};
     uint8_t data_read[TEST_WRITE_READ_SIZE] = {};
 
-    ASSERT_SUCCESS_PSA(atecc608a_random(data_write));
+    ASSERT_SUCCESS_PSA(atecc608a_random_32_bytes(data_write, TEST_WRITE_READ_SIZE));
     ASSERT_SUCCESS_PSA(atecc608a_write(slot, 0, data_write, TEST_WRITE_READ_SIZE));
     ASSERT_SUCCESS_PSA(atecc608a_read(slot, 0, data_read, TEST_WRITE_READ_SIZE));
     ASSERT_STATUS(memcmp(data_write, data_read, TEST_WRITE_READ_SIZE),
