@@ -183,6 +183,8 @@ int main(void)
     /* Verify that the device has a locked config before doing anything */
     ASSERT_SUCCESS_PSA(atecc608a_check_config_locked());
 
+    /* Slot 8 is usually used as a clear write and read certificate
+     * or signature slot, as it is the biggest one (416 bytes of space). */
     test_write_read_slot(8);
 
     /* Test that a public key received during a private key generation
