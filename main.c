@@ -184,12 +184,12 @@ psa_status_t test_psa_import_verify()
     };
 
     ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_asym->p_sign(
-                     atecc608a_private_key_slot, alg, hash, sizeof(hash),
-                     signature, sizeof(signature), &signature_length));
+                       atecc608a_private_key_slot, alg, hash, sizeof(hash),
+                       signature, sizeof(signature), &signature_length));
 
     ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_key_management->p_export(
-                     atecc608a_private_key_slot, pubkey, sizeof(pubkey),
-                     &pubkey_len));
+                       atecc608a_private_key_slot, pubkey, sizeof(pubkey),
+                       &pubkey_len));
     /*
      * Import the secure element's public key into a volatile key slot.
      */
@@ -228,70 +228,72 @@ psa_status_t test_generate_import()
 
     /* Passing an invalid key slot should fail. */
     ASSERT_STATUS_PSA(atecc608a_drv_info.p_key_management->p_generate(
-                         bad_key_id, keypair_type,
-                         PSA_KEY_USAGE_SIGN | PSA_KEY_USAGE_VERIFY,
-                         key_bits, NULL, 0, pubkey, pubkey_size, &pubkey_len),
+                             bad_key_id, keypair_type,
+                             PSA_KEY_USAGE_SIGN | PSA_KEY_USAGE_VERIFY,
+                             key_bits, NULL, 0, pubkey, pubkey_size, &pubkey_len),
                   PSA_ERROR_INVALID_ARGUMENT,
                   PSA_ERROR_HARDWARE_FAILURE);
 
     /* Passing an invalid key type should fail. */
     ASSERT_STATUS_PSA(atecc608a_drv_info.p_key_management->p_generate(
-                         atecc608a_private_key_slot, bad_key_type,
-                         PSA_KEY_USAGE_SIGN | PSA_KEY_USAGE_VERIFY,
-                         key_bits, NULL, 0, pubkey, pubkey_size,
-                         &pubkey_len),
+                             atecc608a_private_key_slot, bad_key_type,
+                             PSA_KEY_USAGE_SIGN | PSA_KEY_USAGE_VERIFY,
+                             key_bits, NULL, 0, pubkey, pubkey_size,
+                             &pubkey_len),
                   PSA_ERROR_NOT_SUPPORTED,
                   PSA_ERROR_HARDWARE_FAILURE);
 
     /* Passing invalid key bits should fail. */
     ASSERT_STATUS_PSA(atecc608a_drv_info.p_key_management->p_generate(
-                         atecc608a_private_key_slot, keypair_type,
-                         PSA_KEY_USAGE_SIGN | PSA_KEY_USAGE_VERIFY,
-                         bad_key_bits, NULL, 0, pubkey, pubkey_size,
-                         &pubkey_len),
+                             atecc608a_private_key_slot, keypair_type,
+                             PSA_KEY_USAGE_SIGN | PSA_KEY_USAGE_VERIFY,
+                             bad_key_bits, NULL, 0, pubkey, pubkey_size,
+                             &pubkey_len),
                   PSA_ERROR_NOT_SUPPORTED,
                   PSA_ERROR_HARDWARE_FAILURE);
 
     /* Passing an invalid size should fail. */
     ASSERT_STATUS_PSA(atecc608a_drv_info.p_key_management->p_generate(
-                         atecc608a_private_key_slot, keypair_type,
-                         PSA_KEY_USAGE_SIGN | PSA_KEY_USAGE_VERIFY,
-                         key_bits, NULL, 0, pubkey, bad_buffer_size,
-                         &pubkey_len),
+                             atecc608a_private_key_slot, keypair_type,
+                             PSA_KEY_USAGE_SIGN | PSA_KEY_USAGE_VERIFY,
+                             key_bits, NULL, 0, pubkey, bad_buffer_size,
+                             &pubkey_len),
                   PSA_ERROR_BUFFER_TOO_SMALL,
                   PSA_ERROR_HARDWARE_FAILURE);
 
     /* Passing a NULL public key buffer should work, regardless of its size. */
     ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_key_management->p_generate(
-                         atecc608a_private_key_slot, keypair_type,
-                         PSA_KEY_USAGE_SIGN | PSA_KEY_USAGE_VERIFY,
-                         key_bits, NULL, 0, NULL, pubkey_size, &pubkey_len));
+                              atecc608a_private_key_slot, keypair_type,
+                              PSA_KEY_USAGE_SIGN | PSA_KEY_USAGE_VERIFY,
+                              key_bits, NULL, 0, NULL, pubkey_size,
+                              &pubkey_len));
 
     /* Passing a NULL pubkey_len should work, even when exporting a public key. */
     ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_key_management->p_generate(
-                         atecc608a_private_key_slot, keypair_type,
-                         PSA_KEY_USAGE_SIGN | PSA_KEY_USAGE_VERIFY,
-                         key_bits, NULL, 0, pubkey, pubkey_size, NULL));
+                              atecc608a_private_key_slot, keypair_type,
+                              PSA_KEY_USAGE_SIGN | PSA_KEY_USAGE_VERIFY,
+                              key_bits, NULL, 0, pubkey, pubkey_size, NULL));
 
     /* Test that a public key received during a private key generation
      * can be imported. */
     ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_key_management->p_generate(
-                         atecc608a_private_key_slot, keypair_type,
-                         PSA_KEY_USAGE_SIGN | PSA_KEY_USAGE_VERIFY,
-                         key_bits, NULL, 0, pubkey, pubkey_size, &pubkey_len));
+                              atecc608a_private_key_slot, keypair_type,
+                              PSA_KEY_USAGE_SIGN | PSA_KEY_USAGE_VERIFY,
+                              key_bits, NULL, 0, pubkey, pubkey_size,
+                              &pubkey_len));
 
     ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_key_management->p_import(
-                         atecc608a_public_key_slot,
-                         atecc608a_drv_info.lifetime,
-                         key_type, alg, PSA_KEY_USAGE_VERIFY, pubkey,
-                         pubkey_len));
+                              atecc608a_public_key_slot,
+                              atecc608a_drv_info.lifetime,
+                              key_type, alg, PSA_KEY_USAGE_VERIFY, pubkey,
+                              pubkey_len));
 
     /* Importing with a bad size should fail. */
     ASSERT_STATUS_PSA(atecc608a_drv_info.p_key_management->p_import(
-                         atecc608a_public_key_slot,
-                         atecc608a_drv_info.lifetime,
-                         key_type, alg, PSA_KEY_USAGE_VERIFY, pubkey,
-                         0),
+                              atecc608a_public_key_slot,
+                              atecc608a_drv_info.lifetime,
+                              key_type, alg, PSA_KEY_USAGE_VERIFY, pubkey,
+                              0),
                   PSA_ERROR_INVALID_ARGUMENT,
                   PSA_ERROR_HARDWARE_FAILURE);
 
@@ -310,14 +312,14 @@ psa_status_t test_export_import()
     size_t pubkey_len = 0;
 
     ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_key_management->p_export(
-                         atecc608a_private_key_slot, pubkey, sizeof(pubkey),
-                         &pubkey_len));
+                              atecc608a_private_key_slot, pubkey,
+                              sizeof(pubkey), &pubkey_len));
 
     ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_key_management->p_import(
-                         atecc608a_public_key_slot,
-                         atecc608a_drv_info.lifetime,
-                         key_type, alg, PSA_KEY_USAGE_VERIFY, pubkey,
-                         pubkey_len));
+                              atecc608a_public_key_slot,
+                              atecc608a_drv_info.lifetime,
+                              key_type, alg, PSA_KEY_USAGE_VERIFY, pubkey,
+                              pubkey_len));
     printf("test_export_import succesful!\n");
     exit:
         return status;
@@ -335,19 +337,21 @@ psa_status_t test_sign_verify()
     size_t pubkey_len = 0;
 
     ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_key_management->p_generate(
-                         atecc608a_private_key_slot, keypair_type,
-                         PSA_KEY_USAGE_SIGN | PSA_KEY_USAGE_VERIFY,
-                         key_bits, NULL, 0, pubkey, pubkey_size, &pubkey_len));
+                              atecc608a_private_key_slot, keypair_type,
+                              PSA_KEY_USAGE_SIGN | PSA_KEY_USAGE_VERIFY,
+                              key_bits, NULL, 0, pubkey, pubkey_size,
+                              &pubkey_len));
 
     ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_key_management->p_import(
-                         atecc608a_public_key_slot,
-                         atecc608a_drv_info.lifetime,
-                         key_type, alg, PSA_KEY_USAGE_VERIFY, pubkey,
-                         pubkey_len));
+                              atecc608a_public_key_slot,
+                              atecc608a_drv_info.lifetime,
+                              key_type, alg, PSA_KEY_USAGE_VERIFY, pubkey,
+                              pubkey_len));
 
     ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_asym->p_sign(
-                         atecc608a_private_key_slot, alg, hash, sizeof(hash),
-                         signature, sizeof(signature), &signature_length));
+                              atecc608a_private_key_slot, alg, hash,
+                              sizeof(hash), signature, sizeof(signature),
+                              &signature_length));
 
     ASSERT_SUCCESS_PSA(atecc608a_drv_info.p_asym->p_verify(
                          atecc608a_public_key_slot, alg, hash, sizeof(hash),
@@ -433,15 +437,15 @@ void print_device_info()
 
 bool interactive_loop()
 {
-    char command [80];
+    char command[80];
     char *arg;
     size_t len;
 
     printf(USAGE);
-    scanf ("%79s",command);
+    scanf ("%79s", command);
     len = strlen(command);
 
-    arg = strchr( command, '=' );
+    arg = strchr(command, '=');
 
     if (strcmp(command, "info") == 0)
     {
@@ -532,11 +536,11 @@ bool interactive_loop()
         }
         printf("Done.\n");
     }
-    else if (strcmp( command, "write_lock_config") == 0)
+    else if (strcmp(command, "write_lock_config") == 0)
     {
         printf("write_lock_config unimplemented.\n");
     }
-    else if (strcmp( command, "lock_data") == 0)
+    else if (strcmp(command, "lock_data") == 0)
     {
         if (atecc608a_lock_data_zone() != PSA_SUCCESS)
         {
@@ -544,7 +548,7 @@ bool interactive_loop()
             printf("locked by running the 'info' command.\n");
         }
     }
-    else if (strncmp( command, "private_slot", strlen("private_slot") - 1) == 0)
+    else if (strncmp(command, "private_slot", strlen("private_slot") - 1) == 0)
     {
         uint16_t slot = 0;
 
@@ -565,7 +569,7 @@ bool interactive_loop()
 
         printf("The private key slot in use is now %u.\n", slot);
     }
-    else if (strncmp( command, "public_slot", strlen("public_slot") - 1) == 0)
+    else if (strncmp(command, "public_slot", strlen("public_slot") - 1) == 0)
     {
         uint16_t slot = 9;
 
