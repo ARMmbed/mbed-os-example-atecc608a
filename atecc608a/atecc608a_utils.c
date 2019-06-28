@@ -43,6 +43,67 @@ exit:
     return status;
 }
 
+static uint16_t getCrc16(const uint8_t *data, uint8_t length)
+{
+    /* The code below is from
+     * Atmel-8936A-CryptoAuth-Data-Zone-CRC-Calculation-ApplicationNote_082015
+     * Endianess swapping is done internally in atcab_lock_config_zone_crc */
+    const uint16_t polynomial = 0x8005; // Taken from the ATCA508A datasheet
+    uint8_t counter;
+    uint16_t crc_register = 0;
+    uint8_t shift_register;
+    uint8_t data_bit, crc_bit;
+
+    for (counter = 0; counter < length; counter++) {
+        for (shift_register = 0x01; shift_register > 0x00;
+                shift_register <<= 1) {
+            data_bit = (data[counter] & shift_register) ? 1 : 0;
+            crc_bit = crc_register >> 15;
+            crc_register <<= 1;
+            if (data_bit != crc_bit) {
+                crc_register ^= polynomial;
+            }
+        }
+    }
+    return crc_register;
+}
+
+psa_status_t atecc608a_write_lock_config(const uint8_t *config_template,
+                                         uint8_t length)
+{
+    psa_status_t status = PSA_ERROR_GENERIC_ERROR;
+    const uint8_t config_size = 128;
+    uint16_t crc;
+    uint8_t config[config_size];
+    bool config_locked = false;
+
+    if (length != config_size) {
+        return PSA_ERROR_INVALID_ARGUMENT;
+    }
+
+    memcpy(config, config_template, config_size);
+
+    ASSERT_SUCCESS_PSA(atecc608a_init());
+
+    ASSERT_SUCCESS(atcab_is_locked(LOCK_ZONE_CONFIG, &config_locked));
+    if (config_locked) {
+        printf("Error while locking config - already locked.\n");
+        return PSA_ERROR_HARDWARE_FAILURE;
+    }
+
+    /* Copy 16 bytes of device-specific data to the prepared config buffer */
+    ASSERT_SUCCESS(atcab_read_bytes_zone(ATCA_ZONE_CONFIG, 0, 0, config, 16));
+
+    crc = getCrc16(config, length);
+
+    ASSERT_SUCCESS(atcab_write_config_zone(config));
+    ASSERT_SUCCESS(atcab_lock_config_zone_crc(crc));
+
+exit:
+    atecc608a_deinit();
+    return status;
+}
+
 psa_status_t atecc608a_check_zone_locked(uint8_t zone)
 {
     bool zone_locked;
@@ -69,7 +130,9 @@ psa_status_t atecc608a_lock_data_zone()
     /* atcab_is_locked used instead of atecc608a_check_zone_locked as an
      * optimization - this way atecc608a_init won't be called again. */
     ASSERT_SUCCESS(atcab_is_locked(LOCK_ZONE_DATA, &zone_locked));
+
     if (zone_locked) {
+        printf("Error while locking data zone - already locked.\n");
         status = PSA_ERROR_HARDWARE_FAILURE;
         goto exit;
     }

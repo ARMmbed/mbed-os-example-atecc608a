@@ -66,4 +66,6 @@ psa_status_t atecc608a_lock_data_zone();
 /** Generate a 32 byte random number from the CryptoAuth device. */
 psa_status_t atecc608a_random_32_bytes(uint8_t *rand_out, size_t buffer_size);
 
+psa_status_t atecc608a_write_lock_config(const uint8_t *config_template,
+                                         uint8_t length);
 #endif /* ATECC608A_SE_H */
