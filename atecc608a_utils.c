@@ -68,6 +68,8 @@ psa_status_t atecc608a_lock_data_zone()
     bool zone_locked;
 
     ASSERT_SUCCESS_PSA(atecc608a_init());
+    /* atcab_is_locked used instead of atecc608a_check_zone_locked as an
+     * optimization - this way atecc608a_init won't be called again. */
     ASSERT_SUCCESS(atcab_is_locked(LOCK_ZONE_DATA, &zone_locked));
     if (zone_locked)
     {
