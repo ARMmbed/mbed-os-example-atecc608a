@@ -5,16 +5,17 @@ curdir=`pwd`
 
 # Update Mbed TLS
 cd mbed-os/features/mbedtls/importer
-if [ ! -d TARGET_IGNORE/mbedtls ]; then
-    make update
+if [ -d TARGET_IGNORE/mbedtls ]; then
+    rm -rf TARGET_IGNORE/mbedtls
 fi
-make
+make update
+make all
 cd $curdir
 
 # Update Mbed Crypto
 cd mbed-os/features/mbedtls/mbed-crypto/importer
-if [ ! -d TARGET_IGNORE/mbed-crypto ]; then
-    make update
+if [ -d TARGET_IGNORE/mbed-crypto ]; then
+    rm -rf TARGET_IGNORE/mbed-crypto
 fi
-make
-
+make update
+make all
