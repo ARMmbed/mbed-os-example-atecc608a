@@ -29,8 +29,7 @@ psa_status_t atecc608a_get_serial_number(uint8_t *buffer,
 {
     psa_status_t status = PSA_ERROR_GENERIC_ERROR;
 
-    if (buffer_size < ATCA_SERIAL_NUM_SIZE)
-    {
+    if (buffer_size < ATCA_SERIAL_NUM_SIZE) {
         return PSA_ERROR_BUFFER_TOO_SMALL;
     }
 
@@ -55,9 +54,8 @@ psa_status_t atecc608a_check_zone_locked(uint8_t zone)
 
 exit:
     atecc608a_deinit();
-    if (status == PSA_SUCCESS)
-    {
-        status = zone_locked? PSA_SUCCESS : PSA_ERROR_HARDWARE_FAILURE;
+    if (status == PSA_SUCCESS) {
+        status = zone_locked ? PSA_SUCCESS : PSA_ERROR_HARDWARE_FAILURE;
     }
     return status;
 }
@@ -71,8 +69,7 @@ psa_status_t atecc608a_lock_data_zone()
     /* atcab_is_locked used instead of atecc608a_check_zone_locked as an
      * optimization - this way atecc608a_init won't be called again. */
     ASSERT_SUCCESS(atcab_is_locked(LOCK_ZONE_DATA, &zone_locked));
-    if (zone_locked)
-    {
+    if (zone_locked) {
         return PSA_ERROR_HARDWARE_FAILURE;
     }
     ASSERT_SUCCESS(atcab_lock_data_zone());
@@ -86,13 +83,11 @@ psa_status_t atecc608a_random_32_bytes(uint8_t *rand_out, size_t buffer_size)
 {
     psa_status_t status = PSA_ERROR_GENERIC_ERROR;
 
-    if (rand_out == NULL)
-    {
+    if (rand_out == NULL) {
         return PSA_ERROR_INVALID_ARGUMENT;
     }
 
-    if (buffer_size < 32)
-    {
+    if (buffer_size < 32) {
         return PSA_ERROR_BUFFER_TOO_SMALL;
     }
 
