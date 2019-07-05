@@ -70,7 +70,8 @@ psa_status_t atecc608a_lock_data_zone()
      * optimization - this way atecc608a_init won't be called again. */
     ASSERT_SUCCESS(atcab_is_locked(LOCK_ZONE_DATA, &zone_locked));
     if (zone_locked) {
-        return PSA_ERROR_HARDWARE_FAILURE;
+        status = PSA_ERROR_HARDWARE_FAILURE;
+        goto exit;
     }
     ASSERT_SUCCESS(atcab_lock_data_zone());
 
