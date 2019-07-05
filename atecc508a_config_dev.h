@@ -155,7 +155,7 @@ const uint8_t config_508a_dev[]  =
    * (4-2)   111    KeyType - Not an ECC Key.
    * (1)     0      PubInfo - Irrelevant, since slot does not contain a key.
    * (0)     0      Private - Not a private key */
-  0x1C, 0x00, /* 112-113 KeyConfig slot 8
+  0x1C, 0x00, /* 112-113 KeyConfig slot 8 */
 
 /* 0x1000 - ‭0001 0000 0000 0000‬
    * (15-14) 00     X509id - Public key validation by any format signature by parent;
