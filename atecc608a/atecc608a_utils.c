@@ -43,7 +43,7 @@ exit:
     return status;
 }
 
-static uint16_t getCrc16(const uint8_t *data, uint8_t length)
+static uint16_t get_crc16(const uint8_t *data, uint8_t length)
 {
     /* The code below is from
      * Atmel-8936A-CryptoAuth-Data-Zone-CRC-Calculation-ApplicationNote_082015
@@ -94,7 +94,7 @@ psa_status_t atecc608a_write_lock_config(const uint8_t *config_template,
     /* Copy 16 bytes of device-specific data to the prepared config buffer */
     ASSERT_SUCCESS(atcab_read_bytes_zone(ATCA_ZONE_CONFIG, 0, 0, config, 16));
 
-    crc = getCrc16(config, length);
+    crc = get_crc16(config, length);
 
     ASSERT_SUCCESS(atcab_write_config_zone(config));
     ASSERT_SUCCESS(atcab_lock_config_zone_crc(crc));
