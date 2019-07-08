@@ -549,8 +549,8 @@ bool interactive_loop()
             return false;
         }
         printf("Writing configuration and locking the config zone... ");
-        status = atecc608a_write_lock_config(config_508a_dev,
-                                             sizeof(config_508a_dev));
+        status = atecc608a_write_lock_config(template_config_508a_dev,
+                                             sizeof(template_config_508a_dev));
         if (status != PSA_SUCCESS) {
             printf("Failed! Error %ld.\n", status);
             return false;

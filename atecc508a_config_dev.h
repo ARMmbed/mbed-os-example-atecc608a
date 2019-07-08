@@ -32,7 +32,7 @@
  * Slot 15 is a private key that utilizes a limited use counter, unique to
  * slot 15. */
 
-const uint8_t config_508a_dev[]  =
+const uint8_t template_config_508a_dev[]  =
 {
   /* 0-15 are read-only device-specific bytes, but for CRC calculation during
    * config writing/locking these have to be read from the device. */
