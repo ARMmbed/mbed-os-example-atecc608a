@@ -23,14 +23,18 @@
 #ifndef ATECC508A_CONFIG_DEV_H
 #define ATECC508A_CONFIG_DEV_H
 
-/* This is a permissive, developer's version of the ATECC508A configuration.
+/* This is a permissive, developer's version of the ATECC508A configuration
+ * template.
  * Slots 0-7 are configured as private keys with enabled clear write.
  * Additionally, slot 6 has a different ECDH operation mode, to use slot 7 as
  * a storage for ECDH master secret.
  * Slot 8 is a certificate storage with clear read and write enabled.
  * Slots 9-14 are configured as public keys with clear read and write enabled.
  * Slot 15 is a private key that utilizes a limited use counter, unique to
- * slot 15. */
+ * slot 15.
+ * Prepared using the DS20005927A datasheet (ATECC508A CryptoAuthentication
+ * Device Complete Data Sheet) revision A (December 2017), Section 2. 
+ * http://ww1.microchip.com/downloads/en/DeviceDoc/20005927A.pdf */
 
 const uint8_t template_config_508a_dev[]  =
 {
@@ -68,9 +72,11 @@ const uint8_t template_config_508a_dev[]  =
   0x87, 0x20, /* 26-27 SlotConfig 3 */
   0x87, 0x20, /* 28-29 SlotConfig 4 */
   0x87, 0x20, /* 30-31 SlotConfig 5 */
-  /* Slot 6 has a different ECDH operation mode - instead of outputing
+  /* Slot 6 is used in a different ECDH operation mode - instead of outputing
    * ECDH master secret in the clear - it uses slot n+1 (7) to write it to.
-   * 0x8F20, ReadKey is 1111. */
+   * 0x8F20, the only difference being:
+   * (0-3)   1111   ReadKey - External and internal signatures enabled, ECDH
+                              operations too. Master secret written to n+1. */
   0x8F, 0x20, /* 32-33 SlotConfig 6 */
   0x87, 0x20, /* 34-35 SlotConfig 7 */
 
@@ -128,7 +134,7 @@ const uint8_t template_config_508a_dev[]  =
    * (15-14) 00     X509id - Public key validation by any format signature by parent;
    * (13)    0      RFU - Must be zero.
    * (12)    0      IntrusionDisable - Use of key independent of the state of IntrusionLatch.
-   * (11-8)  0000   AuthKey - Zero becaues ReqAuth is zero.
+   * (11-8)  0000   AuthKey - Zero because ReqAuth is zero.
    * (7)     0      ReqAuth - No prior authorization is required before using the key.
    * (6)     0      ReqRandom - A random nonce is not required for a specific group of commands.
    * (5)     0      Lockable - Slot cannot be individually locked using the Lock command.
@@ -148,7 +154,7 @@ const uint8_t template_config_508a_dev[]  =
    * (15-14) 00     X509id - Public key validation by any format signature by parent;
    * (13)    0      RFU - Must be zero.
    * (12)    0      IntrusionDisable - Use of key independent of the state of IntrusionLatch.
-   * (11-8)  0000   AuthKey - Zero becaues ReqAuth is zero.
+   * (11-8)  0000   AuthKey - Zero because ReqAuth is zero.
    * (7)     0      ReqAuth - No prior authorization is required before using the key.
    * (6)     0      ReqRandom - A random nonce is not required for a specific group of commands.
    * (5)     0      Lockable - Slot cannot be individually locked using the Lock command.
@@ -161,7 +167,7 @@ const uint8_t template_config_508a_dev[]  =
    * (15-14) 00     X509id - Public key validation by any format signature by parent;
    * (13)    0      RFU - Must be zero.
    * (12)    0      IntrusionDisable - Use of key independent of the state of IntrusionLatch.
-   * (11-8)  0000   AuthKey - Zero becaues ReqAuth is zero.
+   * (11-8)  0000   AuthKey - Zero because ReqAuth is zero.
    * (7)     0      ReqAuth - No prior authorization is required before using the key.
    * (6)     0      ReqRandom - A random nonce is not required for a specific group of commands.
    * (5)     0      Lockable - Slot cannot be individually locked using the Lock command.
