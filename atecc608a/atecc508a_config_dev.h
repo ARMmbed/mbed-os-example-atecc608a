@@ -72,7 +72,7 @@ const uint8_t template_config_508a_dev[]  =
   0x87, 0x20, /* 26-27 SlotConfig 3 */
   0x87, 0x20, /* 28-29 SlotConfig 4 */
   0x87, 0x20, /* 30-31 SlotConfig 5 */
-  /* Slot 6 is used in a different ECDH operation mode - instead of outputing
+  /* Slot 6 is used in a different ECDH operation mode - instead of outputting
    * ECDH master secret in the clear - it uses slot n+1 (7) to write it to.
    * 0x8F20, the only difference being:
    * (0-3)   1111   ReadKey - External and internal signatures enabled, ECDH
@@ -130,7 +130,7 @@ const uint8_t template_config_508a_dev[]  =
   0x00, 0x00, 0x00, 0x00, /* 92-95 X509format - 0 means ignore formatting restrictions. */
 
   /* 96-127 - KeyConfig - usage permissions and control, two bytes per slot. */
-  /* 0x1300 - ‭0001 0011 0000 0000‬
+  /* 0x1300 - 0001 0011 0000 0000
    * (15-14) 00     X509id - Public key validation by any format signature by parent;
    * (13)    0      RFU - Must be zero.
    * (12)    0      IntrusionDisable - Use of key independent of the state of IntrusionLatch.
@@ -150,7 +150,7 @@ const uint8_t template_config_508a_dev[]  =
   0x13, 0x00, /* 108-109 KeyConfig slot 6 */
   0x13, 0x00, /* 110-111 KeyConfig slot 7 */
 
-/* 0x1C00 - ‭0001 1100 0000 0000‬
+/* 0x1C00 - 0001 1100 0000 0000
    * (15-14) 00     X509id - Public key validation by any format signature by parent;
    * (13)    0      RFU - Must be zero.
    * (12)    0      IntrusionDisable - Use of key independent of the state of IntrusionLatch.
@@ -163,7 +163,7 @@ const uint8_t template_config_508a_dev[]  =
    * (0)     0      Private - Not a private key */
   0x1C, 0x00, /* 112-113 KeyConfig slot 8 */
 
-/* 0x1000 - ‭0001 0000 0000 0000‬
+/* 0x1000 - 0001 0000 0000 0000
    * (15-14) 00     X509id - Public key validation by any format signature by parent;
    * (13)    0      RFU - Must be zero.
    * (12)    0      IntrusionDisable - Use of key independent of the state of IntrusionLatch.
