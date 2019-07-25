@@ -43,31 +43,6 @@ exit:
     return status;
 }
 
-static uint16_t get_crc16(const uint8_t *data, uint8_t length)
-{
-    /* The code below is from
-     * Atmel-8936A-CryptoAuth-Data-Zone-CRC-Calculation-ApplicationNote_082015
-     * Endianess swapping is done internally in atcab_lock_config_zone_crc */
-    const uint16_t polynomial = 0x8005; // Taken from the ATCA508A datasheet
-    uint8_t counter;
-    uint16_t crc_register = 0;
-    uint8_t shift_register;
-    uint8_t data_bit, crc_bit;
-
-    for (counter = 0; counter < length; counter++) {
-        for (shift_register = 0x01; shift_register > 0x00;
-                shift_register <<= 1) {
-            data_bit = (data[counter] & shift_register) ? 1 : 0;
-            crc_bit = crc_register >> 15;
-            crc_register <<= 1;
-            if (data_bit != crc_bit) {
-                crc_register ^= polynomial;
-            }
-        }
-    }
-    return crc_register;
-}
-
 psa_status_t atecc608a_write_lock_config(const uint8_t *config_template,
                                          uint8_t length)
 {
@@ -94,7 +69,7 @@ psa_status_t atecc608a_write_lock_config(const uint8_t *config_template,
     /* Copy 16 bytes of device-specific data to the prepared config buffer */
     ASSERT_SUCCESS(atcab_read_bytes_zone(ATCA_ZONE_CONFIG, 0, 0, config, 16));
 
-    crc = get_crc16(config, length);
+    atCRC(length, config, &crc);
 
     ASSERT_SUCCESS(atcab_write_config_zone(config));
     ASSERT_SUCCESS(atcab_lock_config_zone_crc(crc));
