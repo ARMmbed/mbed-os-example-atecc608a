@@ -33,7 +33,7 @@
  * Slot 15 is a private key that utilizes a limited use counter, unique to
  * slot 15.
  * Prepared using the DS20005927A datasheet (ATECC508A CryptoAuthentication
- * Device Complete Data Sheet) revision A (December 2017), Section 2. 
+ * Device Complete Data Sheet) revision A (December 2017), Section 2.
  * http://ww1.microchip.com/downloads/en/DeviceDoc/20005927A.pdf */
 
 const uint8_t template_config_508a_dev[]  =
@@ -148,7 +148,11 @@ const uint8_t template_config_508a_dev[]  =
   0x13, 0x00, /* 104-105 KeyConfig slot 4 */
   0x13, 0x00, /* 106-107 KeyConfig slot 5 */
   0x13, 0x00, /* 108-109 KeyConfig slot 6 */
-  0x13, 0x00, /* 110-111 KeyConfig slot 7 */
+  /* Slot 7 is used to contain ECDH master secret, so according to the KeyType description,
+   * KeyType has to be 0b111.
+   * 0x1F00 - 0001 1111 0000 0000, the only difference being:
+   * (4-2) 111 KeyType - Not an ECC key, but "any other kind of data, key, or secret". */
+  0x1F, 0x00, /* 110-111 KeyConfig slot 7 */
 
 /* 0x1C00 - 0001 1100 0000 0000
    * (15-14) 00     X509id - Public key validation by any format signature by parent;
