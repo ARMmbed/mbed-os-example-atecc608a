@@ -25,6 +25,7 @@
 #include "atecc608a_se.h"
 #include "atecc608a_utils.h"
 #include "atca_helpers.h"
+#include "atecc508a_config_dev.h"
 
 /** This macro checks if the result of an `expression` is equal to an
  *  `expected` value and sets a `status` variable of type `psa_status_t` to
@@ -62,6 +63,18 @@
     " - write_lock_config - write a hardcoded configuration to the device,\n"\
     "                       lock it;\n"\
     " - lock_data - lock the data zone;\n\n"
+
+#define WARNING_CONFIG \
+    "\n\nWarning! Locking a configuration zone is irreversible.\n"\
+    "Please make sure that a desired configuration is used in the process.\n"\
+    "Are you sure you want to proceed? [y/n]: "
+
+#define WARNING_DATA \
+    "\n\nWarning! Locking the data/OTP zone is irreversible.\n"\
+    "Please note that locking the data/OTP zone does not mean that\n"\
+    "the values in these zones cannot be modified; locking indicates that\n"\
+    "the slot now behaves according to the policies set by the associated\n"\
+    "configuration zone’s values. [y/n]: "
 
 /* Data used by tests */
 psa_key_slot_number_t atecc608a_private_key_slot = 0;
@@ -434,6 +447,18 @@ void print_device_info()
            atecc608a_private_key_slot, atecc608a_public_key_slot);
 }
 
+bool prompt_confirmation(char *message)
+{
+    char confirmation[2];
+    printf(message);
+    scanf("%1s", confirmation);
+    printf("\n");
+    if (confirmation[0] == 'y' || confirmation[0] == 'Y') {
+        return true;
+    }
+    return false;
+}
+
 bool interactive_loop()
 {
     char command[80];
@@ -519,12 +544,30 @@ bool interactive_loop()
         }
         printf("Done.\n");
     } else if (strcmp(command, "write_lock_config") == 0) {
-        printf("write_lock_config unimplemented.\n");
-    } else if (strcmp(command, "lock_data") == 0) {
-        if (atecc608a_lock_data_zone() != PSA_SUCCESS) {
-            printf("Locking data zone failed! Please check if it isn't already\n");
-            printf("locked by running the 'info' command.\n");
+        psa_status_t status;
+        if (!prompt_confirmation(WARNING_CONFIG)) {
+            return false;
         }
+        printf("Writing configuration and locking the config zone... ");
+        status = atecc608a_write_lock_config(template_config_508a_dev,
+                                             sizeof(template_config_508a_dev));
+        if (status != PSA_SUCCESS) {
+            printf("Failed! Error %ld.\n", status);
+            return false;
+        }
+        printf("Done.\n");
+    } else if (strcmp(command, "lock_data") == 0) {
+        psa_status_t status;
+        if (!prompt_confirmation(WARNING_DATA)) {
+            return false;
+        }
+        printf("Locking the data/OTP zone... ");
+        status = atecc608a_lock_data_zone();
+        if (status != PSA_SUCCESS) {
+            printf("Failed! Error %ld.\n", status);
+            return false;
+        }
+        printf("Done.\n");
     } else if (strncmp(command, "private_slot", strlen("private_slot") - 1) == 0) {
         uint16_t slot = 0;
 
