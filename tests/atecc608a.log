@@ -1,6 +1,5 @@
 Running tests...
 test_hash_sha256 succesful!
-test_generate_import succesful!
 test_export_import succesful!
 test_sign_verify succesful!
 test_psa_import_verify succesful!
