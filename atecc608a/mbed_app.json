@@ -14,5 +14,8 @@
             "cryptoauthlib.i2c_scl": "PA09"
         }
     },
-    "macros": ["ATCAPRINTF"]
+    "macros": [
+        "ATCAPRINTF",
+        "MBEDTLS_USER_CONFIG_FILE=\"mbedtls_user_config.h\""
+    ]
 }
