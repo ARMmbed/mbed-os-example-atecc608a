@@ -96,11 +96,12 @@ psa_key_slot_number_t atecc608a_public_key_slot = 9;
 enum {
     key_type = PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_CURVE_SECP256R1),
     keypair_type = PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_CURVE_SECP256R1),
-    key_bits = 256,
+    priv_bits = PSA_BYTES_TO_BITS(32),
+    pub_bits = PSA_BYTES_TO_BITS(64),
     hash_alg = PSA_ALG_SHA_256,
     alg = PSA_ALG_ECDSA(hash_alg),
-    sig_size = PSA_ASYMMETRIC_SIGN_OUTPUT_SIZE(key_type, key_bits, alg),
-    pubkey_size = PSA_KEY_EXPORT_ECC_PUBLIC_KEY_MAX_SIZE(key_bits),
+    sig_size = PSA_ASYMMETRIC_SIGN_OUTPUT_SIZE(key_type, priv_bits, alg),
+    pubkey_size = PSA_KEY_EXPORT_ECC_PUBLIC_KEY_MAX_SIZE(pub_bits),
     hash_size = PSA_HASH_SIZE(hash_alg),
 };
 
@@ -348,13 +349,14 @@ void setup_key_attributes(psa_key_attributes_t *attributes,
     psa_set_key_id(attributes, slot);
     psa_set_key_lifetime(attributes, PSA_ATECC608A_LIFETIME);
     psa_set_key_algorithm(attributes, alg);
-    psa_set_key_bits(attributes, key_bits);
 
     if (is_private) {
+        psa_set_key_bits(attributes, priv_bits);
         psa_set_key_usage_flags(attributes, PSA_KEY_USAGE_SIGN);
         psa_set_key_type(attributes,
                          PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_CURVE_SECP256R1));
     } else {
+        psa_set_key_bits(attributes, pub_bits);
         psa_set_key_usage_flags(attributes, PSA_KEY_USAGE_VERIFY);
         psa_set_key_type(attributes,
                          PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_CURVE_SECP256R1));
