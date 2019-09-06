@@ -195,7 +195,7 @@ psa_status_t test_psa_import_verify(psa_key_attributes_t *private_attributes)
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
     };
     psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
-    
+
     ASSERT_SUCCESS_PSA(psa_open_key(atecc608a_private_key_slot,
                                     &private_handle));
 
@@ -404,7 +404,7 @@ void print_device_info()
     atecc608a_print_serial_number();
     atecc608a_print_config_zone();
     atecc608a_print_locked_zones();
-    printf("\nPrivate key slot in use: %llu, public: %llu\n",
+    printf("\nPrivate key slot in use: %" PRIu64 ", public: %" PRIu64 "\n",
            atecc608a_private_key_slot, atecc608a_public_key_slot);
 }
 
