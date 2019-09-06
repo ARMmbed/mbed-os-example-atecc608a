@@ -22,11 +22,11 @@
 
 #if defined(ATCA_HAL_I2C)
 #include "psa/crypto.h"
+#include "psa/lifecycle.h"
 #include "atecc608a_se.h"
 #include "atecc608a_utils.h"
 #include "atca_helpers.h"
 #include "atecc508a_config_dev.h"
-#include "psa_crypto_storage.h"
 /** This macro checks if the result of an `expression` is equal to an
  *  `expected` value and sets a `status` variable of type `psa_status_t` to
  *  `PSA_SUCCESS`. If they are not equal, the `status` is set to
@@ -75,19 +75,6 @@
     "the values in these zones cannot be modified; locking indicates that\n"\
     "the slot now behaves according to the policies set by the associated\n"\
     "configuration zone’s values. [y/n]: "
-
-static void psa_purge_keys(void)
-{
-    psa_key_id_t id;
-    printf("Clearing persistent key data\n");
-    /* Clear slots 0-15 of persistent storage. These numbers are equal to
-     * physical slots available on the device. */
-    for (id = 0; id < 16; id++) {
-        psa_destroy_persistent_key(id);
-    }
-    /* Purge the transaction file. */
-    psa_crypto_stop_transaction();
-}
 
 /* Data used by tests */
 psa_key_slot_number_t atecc608a_private_key_slot = 1;
@@ -371,7 +358,7 @@ psa_status_t run_tests()
     psa_key_attributes_t public_key_attributes = PSA_KEY_ATTRIBUTES_INIT;
     psa_key_attributes_t private_key_attributes = PSA_KEY_ATTRIBUTES_INIT;
 
-    psa_purge_keys();
+    mbed_psa_reboot_and_request_new_security_state(PSA_LIFECYCLE_ASSEMBLY_AND_TEST);
 
     setup_key_attributes(&public_key_attributes,
                          atecc608a_public_key_slot, 0);
@@ -392,7 +379,7 @@ psa_status_t run_tests()
 
     /* Purge, so that we can test driver behaviour with a key that is registered,
      * not generated. */
-    psa_purge_keys();
+    mbed_psa_reboot_and_request_new_security_state(PSA_LIFECYCLE_ASSEMBLY_AND_TEST);
     ASSERT_SUCCESS_PSA(mbedtls_psa_register_se_key(&private_key_attributes));
 
     ASSERT_SUCCESS_PSA(test_export_import(&private_key_attributes,
@@ -602,7 +589,7 @@ int main(void)
     bool exit_application = false;
 
     print_device_info();
-    psa_destroy_se_persistent_data(PSA_ATECC608A_LIFETIME);
+    mbed_psa_reboot_and_request_new_security_state(PSA_LIFECYCLE_ASSEMBLY_AND_TEST);
     ASSERT_SUCCESS_PSA(psa_register_se_driver(PSA_ATECC608A_LIFETIME, &atecc608a_drv_info));
 
     ASSERT_SUCCESS_PSA(psa_crypto_init());
