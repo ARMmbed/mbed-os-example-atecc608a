@@ -21,8 +21,8 @@ mbed compile -t GCC_ARM -m K64F --flash --sterm
 
 ## Hardware interface
 
-A couple of evaluation and development kits available for ATECC508A.
-To interface with an Mbed platform, you have to make I2C and power supply connections. Note that ATECC508A requires a 5V supply.
+A couple of evaluation and development kits are available for the ATECC508A secure element.
+To interface with an Mbed platform, you have to make inter-integrated circuit (I2C) and power supply connections. Note that ATECC508A requires a 5V supply.
 
 This is an example of how to connect an
 [ATCRYPTOAUTH-XPRO-B](http://www.microchip.com/DevelopmentTools/ProductDetails.aspx?PartNO=ATCRYPTOAUTH-XPRO-B)
@@ -39,4 +39,4 @@ This image shows an ATCRYPTOAUTH-XPRO-B on an Arduino shield:
 
 ![ATCRYPTOAUTH-XPRO-B-Shield](ATCRYPTOAUTH-XPRO-B-Shield.jpg)
 
-<span class="notes">**Note:** ATCRYPTOAUTH-XPRO-B comes with ATECC508A and ATECC608A ICs. Use Jumper J5 to enable ATECC508A.</span>
+<span class="notes">**Note:** ATCRYPTOAUTH-XPRO-B comes with ATECC508A and ATECC608A integrated circuits (ICs). Use the J5 jumper to enable ATECC508A.</span>
