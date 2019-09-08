@@ -1,5 +1,7 @@
 # Mbed OS Examples for the ATECC608A secure element
 
+The examples in this repository demonstrate how to use the ATECC608A secure element with Mbed OS. The `atecc608a` example demonstrates use of the ATECC608A with Mbed Crypto. Examples of how to generate a certificate using pre-provisioned ATECC608A keys and how to use ATECC608A with Mbed TLS are yet to come.
+
 <span class="notes">**Note:** To see a rendered example you can import into the Arm Online Compiler, please see our [quick start](https://os.mbed.com/docs/mbed-os/latest/quick-start/online-with-the-online-compiler.html#importing-the-code).</span>
 
 ## Prerequisites
