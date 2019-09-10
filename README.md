@@ -2,7 +2,7 @@
 
 The examples in this repository demonstrate how to use the ATECC608A secure element with Mbed OS. The `atecc608a` example demonstrates use of the ATECC608A with Mbed Crypto. Examples of how to generate a certificate using pre-provisioned ATECC608A keys and how to use ATECC608A with Mbed TLS are yet to come.
 
-<span class="notes">**Note:** To see a rendered example you can import into the Arm Online Compiler, please see our [quick start](https://os.mbed.com/docs/mbed-os/latest/quick-start/online-with-the-online-compiler.html#importing-the-code).</span>
+Note: To see a rendered example you can import into the Arm Online Compiler, please see our [quick start](https://os.mbed.com/docs/mbed-os/latest/quick-start/online-with-the-online-compiler.html#importing-the-code).
 
 ## Prerequisites
 
@@ -18,7 +18,6 @@ From the command-line, import the example:
 ```sh
 git clone git@github.com:ARMmbed/mbed-os-example-atecc608a.git
 cd mbed-os-example-atecc608a/atecc608a
-mbed new .
 mbed deploy
 ```
 
@@ -33,7 +32,64 @@ mbed compile -t GCC_ARM -m K64F --flash --sterm
 Your PC may take a few minutes to compile your code. At the end, you see the following result:
 
 ```
-Image: ./BUILD/K64F/GCC_ARM/mbed-os-example-atecc608a.bin
+Image: ./BUILD/K64F/GCC_ARM/atecc608a.bin
+--- Terminal on /dev/ttyACM0 - 9600,8,N,1 ---
+Serial Number:
+01 23 BA CF BA D3 29 CA EE
+
+Config zone: 01 23 BA CF 00 00 50 00 BA D3 29 CA EE C0 3D 00
+C0 00 55 00 83 20 83 20 83 20 83 20 83 20 83 20
+83 20 83 20 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 AF 8F FF FF FF FF 00 00 00 00 FF FF FF FF
+00 00 00 00 FF FF FF FF FF FF FF FF FF FF FF FF
+FF FF FF FF 00 00 00 00 FF FF 00 00 00 00 00 00
+13 00 13 00 13 00 13 00 13 00 13 00 13 00 13 00
+1C 00 10 00 10 00 10 00 10 00 10 00 10 00 1C 00
+
+--- Device locks information ---
+  - Config locked: 1
+  - Data locked: 1
+  - Slot 0 locked: 0
+  - Slot 1 locked: 0
+  - Slot 2 locked: 0
+  - Slot 3 locked: 0
+  - Slot 4 locked: 0
+  - Slot 5 locked: 0
+  - Slot 6 locked: 0
+  - Slot 7 locked: 0
+  - Slot 8 locked: 0
+  - Slot 9 locked: 0
+  - Slot 10 locked: 0
+  - Slot 11 locked: 0
+  - Slot 12 locked: 0
+  - Slot 13 locked: 0
+  - Slot 14 locked: 0
+  - Slot 15 locked: 0
+--------------------------------
+
+Private key slot in use: 1, public: 9
+Running tests...
+test_hash_sha256 succesful!
+test_sign_verify succesful!
+test_export_import succesful!
+test_psa_import_verify succesful!
+test_write_read_slot succesful!
+
+
+Available commands:
+ - info - print configuration information;
+ - test - run all tests on the device;
+ - exit - exit the interactive loop;
+ - generate_private[=%d] - generate a private key in a given slot (0-15),
+                           default slot - 0.
+ - generate_public=%d_%d - generate a public key in a given slot
+                           (0-15, second argument) using a private key
+                           from a given slot (0-15, first argument);
+ - private_slot=%d - designate a slot to be used as a private key in tests;
+ - public_slot=%d - designate a slot to be used as a public key in tests;
+ - write_lock_config - write a hardcoded configuration to the device,
+                       lock it;
+ - lock_data - lock the data zone;
 ```
 
 ## Hardware interface
