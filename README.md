@@ -2,13 +2,15 @@
 
 The examples in this repository demonstrate how to use the ATECC608A secure element with Mbed OS. The `atecc608a` example demonstrates use of the ATECC608A with Mbed Crypto. Examples of how to generate a certificate using pre-provisioned ATECC608A keys and how to use ATECC608A with Mbed TLS are yet to come.
 
-Note: To see a rendered example you can import into the Arm Online Compiler, please see our [quick start](https://os.mbed.com/docs/mbed-os/latest/quick-start/online-with-the-online-compiler.html#importing-the-code).
+<span class="notes">**Note:** To see a rendered example you can import into the Arm Online Compiler, please see our [quick start](https://os.mbed.com/docs/mbed-os/latest/quick-start/online-with-the-online-compiler.html#importing-the-code).</span>
 
 ## Prerequisites
 
 * [Install Mbed CLI](https://os.mbed.com/docs/mbed-os/latest/tools/installation-and-setup.html).
 
 * [Install the arm-none-eabi-ggc toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads).
+
+* A K64F board connected to a ATECC608A secure element as shown in [Hardware interface](#hardware-interface)
 
 
 ## Importing the example
@@ -95,7 +97,7 @@ Available commands:
 ## Hardware interface
 
 A couple of evaluation and development kits are available for the ATECC608A secure element.
-To interface with an Mbed platform, you have to make inter-integrated circuit (I2C) and power supply connections. Note that ATECC508A requires a 5V supply.
+To interface with an Mbed platform, you have to make I2C and power supply connections. Note that ATECC508A requires a 5V supply.
 
 This is an example of how to connect an
 [ATCRYPTOAUTH-XPRO-B](http://www.microchip.com/DevelopmentTools/ProductDetails.aspx?PartNO=ATCRYPTOAUTH-XPRO-B)
