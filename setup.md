@@ -26,19 +26,18 @@ Follow the `readme.txt` for detailed installation instructions.
 
 ```sh
 git clone git@github.com:ARMmbed/mbed-os-example-atecc608a.git
-cd mbed-os-example-atecc608a/
+cd mbed-os-example-atecc608a/atecc608a
 source ~/venvs/mbed/bin/activate
-mbed new .
 mbed deploy
 mbed compile -t GCC_ARM -m K64F --flash --sterm
 ```
 
 ### PSA Crypto driver development
 
-Add any driver files (none created so far) to the mbed-os-atecc608a folder. It
-is backed by the
+Driver files are located in the atecc608a/mbed-os-atecc608a folder.
+It is backed by the
 [mbed-os-atecc608a](https://github.com/ARMmbed/mbed-os-atecc608a/tree/mbed-cryptoauthlib)
-repo, which any application wanting to use Mbed OS and the ATECC608A will
+repository, which any application wanting to use Mbed OS and the ATECC608A will
 depend on (same as how this example depends on it).
 
 Any Mbed Crypto changes needed to support your driver work should be done in
