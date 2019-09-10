@@ -10,7 +10,7 @@ The examples in this repository demonstrate how to use the ATECC608A secure elem
 
 * [Install the arm-none-eabi-ggc toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads).
 
-* A target with I2C and power supply connections, connected to a ATECC608A secure element as shown in [Hardware interface](#hardware-interface).
+* A target with I2C and power supply connections, connected to an ATECC608A secure element as shown in [Hardware interface](#hardware-interface).
 
 
 ## Importing the example
