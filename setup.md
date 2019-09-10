@@ -45,14 +45,6 @@ Any Mbed Crypto changes needed to support your driver work should be done in
 `mbed-os/features/mbedtls/mbed-crypto/importer/TARGET_IGNORE/mbed-crypto`, and copied
 into Mbed OS's idiosyncratic file layout before use using the importer.
 
-For the first-time setup only, if you need to make any Mbed Crypto changes,
-perform the following operations:
-
-```sh
-cd mbed-os/features/mbedtls/mbed-crypto/importer
-make update
-```
-
 For every change you make in Mbed Crypto (which you'd make inside
 `mbed-os/features/mbedtls/mbed-crypto/importer/TARGET_IGNORE/mbed-crypto`),
 update Mbed OS with those changes by performing the following operations.
