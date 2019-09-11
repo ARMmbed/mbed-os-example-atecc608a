@@ -23,7 +23,7 @@ cd mbed-os-example-atecc608a/atecc608a
 mbed deploy
 ```
 
-## Compiling the example
+## Compiling and running the example
 
 Invoke `mbed compile`, and specify the name of your platform and your toolchain (`GCC_ARM`, `ARM`, `IAR`). For example, for the GCC_ARM compiler:
 
