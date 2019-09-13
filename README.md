@@ -9,6 +9,11 @@ The examples in this repository demonstrate how to use the ATECC608A secure elem
 * [Install Mbed CLI](https://os.mbed.com/docs/mbed-os/latest/tools/installation-and-setup.html).
 
 * [Install the arm-none-eabi-ggc toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads).
+  - The [cryptoauthlib](https://github.com/MicrochipTech/cryptoauthlib) which
+    this example depends on [does not build on
+    IAR](https://github.com/ARMmbed/mbed-os-example-atecc608a/issues/15),
+    [ARMC5 or
+    ARMC6](https://github.com/ARMmbed/mbed-os-example-atecc608a/issues/16).
 
 * A target with I2C and power supply connections, connected to an ATECC608A secure element as shown in [Hardware interface](#hardware-interface).
 
