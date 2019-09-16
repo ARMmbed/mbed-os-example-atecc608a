@@ -30,7 +30,8 @@ mbed deploy
 
 ## Compiling and running the example
 
-Invoke `mbed compile`, and specify the name of your platform and your toolchain (`GCC_ARM`, `ARM`, `IAR`). For example, for the GCC_ARM compiler:
+Invoke `mbed compile`, and specify the name of your platform and your toolchain
+(only `GCC_ARM` works at the moment). For example, for the GCC_ARM compiler:
 
 ```sh
 mbed compile -t GCC_ARM -m K64F --flash --sterm
