@@ -1,6 +1,6 @@
 Running tests...
 test_hash_sha256 succesful!
-test_export_import succesful!
 test_sign_verify succesful!
+test_export_import succesful!
 test_psa_import_verify succesful!
 test_write_read_slot succesful!
