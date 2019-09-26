@@ -473,7 +473,6 @@ bool interactive_loop()
         psa_key_handle_t public_handle = 0;
         psa_key_handle_t private_handle = 0;
         psa_key_attributes_t public_attributes = PSA_KEY_ATTRIBUTES_INIT;
-        psa_key_attributes_t private_attributes = PSA_KEY_ATTRIBUTES_INIT;
 
         // Check if an argument is missing
         if (len <= strlen("generate_public=0_9") - 1) {
@@ -489,7 +488,6 @@ bool interactive_loop()
             return false;
         }
         setup_key_attributes(&public_attributes, slot_public, 0);
-        setup_key_attributes(&private_attributes, slot_private, 1);
         printf("Exporting a public key from private key in slot %u... ",
                slot_private);
 
