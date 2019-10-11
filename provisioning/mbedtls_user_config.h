@@ -23,5 +23,9 @@
 /* Make Mbed TLS use the PSA Crypto API. */
 #define MBEDTLS_USE_PSA_CRYPTO
 
-/* Enable printing of public keys in PEM format. */
+/* Enable printing of public keys and CSRs in PEM format. */
 #define MBEDTLS_PEM_WRITE_C
+
+/* Enable additional features needed to generate a CSR. */
+#define MBEDTLS_X509_CREATE_C
+#define MBEDTLS_X509_CSR_WRITE_C

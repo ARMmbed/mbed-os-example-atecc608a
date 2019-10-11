@@ -62,3 +62,10 @@ To generate a key, specify the lifetime with `psa_set_key_lifetime()` and
 `PSA_ATECC608A_LIFETIME`. Fill in any other other necessary attributes, and
 then call `psa_generate_key()` to request the key be generated within the
 ATECC608A.
+
+
+### Generating CSRs on-device
+
+This example generates certificate signing requests (CSRs) which can be used
+for TLS client authentication. The CSR is printed over the serial port, for
+use with your certificate authority (CA).

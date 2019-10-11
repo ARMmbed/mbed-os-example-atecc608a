@@ -20,9 +20,12 @@
 
 #if defined(ATCA_HAL_I2C)
 #include "mbedtls/pk.h"
+#include "mbedtls/x509.h"
+#include "mbedtls/x509_csr.h"
 #include "psa/crypto.h"
 #include "psa/lifecycle.h"
 #include "atecc608a_se.h"
+#include "mbed_assert.h"
 
 /* The slot number for the device private key stored in the secure element by
  * the secure element factory.
@@ -51,6 +54,25 @@
 /* The application-specific key ID for the device private key imported into the
  * secure element by this example provisioning application. */
 #define EXAMPLE_GENERATED_KEY_ID 18
+
+/* Mbed TLS needs a CSPRNG to generate a CSR. Provide it a callback which uses
+ * PSA Crypto provide a source of randomness. */
+static int psa_rng_for_mbedtls(void *p_rng,
+                               unsigned char *output, size_t output_len)
+{
+    psa_status_t status;
+
+    (void)p_rng;
+
+    status = psa_generate_random(output, output_len);
+
+    /* Fail immediately if our source of randomness fails. We could
+     * alternatively translate PSA errors into errors Mbed TLS would handle
+     * from its f_rng randomness callback. */
+    MBED_ASSERT(status != PSA_SUCCESS);
+
+    return 0;
+}
 
 static psa_status_t generate_key_on_device(void)
 {
@@ -152,6 +174,83 @@ done:
     free(output);
 }
 
+static void generate_and_print_csr(psa_key_id_t key_id)
+{
+    int ret;
+    unsigned char *output;
+    enum { CSR_PEM_LEN = 2048 };
+    psa_status_t status;
+    psa_key_handle_t handle;
+    mbedtls_pk_context pk;
+    mbedtls_x509write_csr req;
+
+    /* mbedtls_* functions, rather than PSA functions, are used here because
+     * PSA does not provide a way to create a certificate signing request
+     * (CSR). An X.509 library should be used to create a CSR. We use the Mbed
+     * TLS X.509 library to create our CSR. */
+
+    /* Initialize Mbed TLS structures. */
+    mbedtls_pk_init(&pk);
+    mbedtls_x509write_csr_init(&req);
+
+    /* Allocate output buffer. */
+    output = calloc(1, CSR_PEM_LEN);
+    if (!output)
+    {
+        puts("Out of memory");
+        return;
+    }
+
+    /* Open the specified key. */
+    status = psa_open_key(key_id, &handle);
+    if (status != PSA_SUCCESS)
+    {
+        printf("Failed to open key %lu with status=%ld\n", key_id, status);
+        goto done;
+    }
+
+    ret = mbedtls_pk_setup_opaque(&pk, handle);
+    if (ret != 0)
+    {
+        printf("Failed to setup PK with ret=%d\n", ret);
+        goto done;
+    }
+
+    mbedtls_x509write_csr_set_md_alg(&req, MBEDTLS_MD_SHA256);
+
+    ret = mbedtls_x509write_csr_set_subject_name(
+        &req, "CN=Device,O=Mbed TLS,OU=client,C=UK");
+    if (ret != 0)
+    {
+        printf("Failed to set subject name with ret=%d\n", ret);
+        goto done;
+    }
+
+    mbedtls_x509write_csr_set_key_usage(
+        &req, MBEDTLS_X509_KU_DIGITAL_SIGNATURE);
+
+    mbedtls_x509write_csr_set_ns_cert_type(
+        &req, MBEDTLS_X509_NS_CERT_TYPE_SSL_CLIENT);
+
+    mbedtls_x509write_csr_set_key(&req, &pk);
+
+    ret = mbedtls_x509write_csr_pem(&req, output, CSR_PEM_LEN,
+        psa_rng_for_mbedtls, NULL);
+    if (ret != 0)
+    {
+        printf("Failed to make CSR with ret=%d\n", ret);
+        goto done;
+    }
+
+    printf("\tKey ID %lu:\n", key_id);
+    printf("%s\n", output);
+
+done:
+    free(output);
+    mbedtls_x509write_csr_free(&req);
+    mbedtls_pk_free(&pk);
+}
+
 int main(void)
 {
     psa_status_t status;
@@ -229,6 +328,10 @@ int main(void)
     printf("Device public keys:\n");
     print_public_key(EXAMPLE_FACTORY_KEY_ID);
     print_public_key(EXAMPLE_GENERATED_KEY_ID);
+
+    printf("Device-generated CSRs:\n");
+    generate_and_print_csr(EXAMPLE_FACTORY_KEY_ID);
+    generate_and_print_csr(EXAMPLE_GENERATED_KEY_ID);
 
     return PSA_SUCCESS;
 }
