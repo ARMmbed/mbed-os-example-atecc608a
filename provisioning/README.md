@@ -69,3 +69,13 @@ ATECC608A.
 This example generates certificate signing requests (CSRs) which can be used
 for TLS client authentication. The CSR is printed over the serial port, for
 use with your certificate authority (CA).
+
+
+### Troubleshooting
+
+If your provisioning data isn't persisting, there is a chance it is being
+overwritten by the flash programmer. If using DAPLink, ensure you are using a
+DAPLink interface version of 0246 or newer. Older versions of DAPLink do not
+support partial flash programming, and always overwrite any data stored in
+internal flash. In our case, this would be the provisioning data we want to
+keep!
