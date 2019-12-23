@@ -8,7 +8,7 @@ The examples in this repository demonstrate how to use the ATECC608A secure elem
 
 * [Install Mbed CLI](https://os.mbed.com/docs/mbed-os/latest/tools/installation-and-setup.html).
 
-* [Install the arm-none-eabi-ggc toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads).
+* [Install the arm-none-eabi-gcc toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads).
   - The [cryptoauthlib](https://github.com/MicrochipTech/cryptoauthlib) which
     this example depends on [does not build on
     IAR](https://github.com/ARMmbed/mbed-os-example-atecc608a/issues/15),
@@ -99,6 +99,21 @@ Available commands:
                        lock it;
  - lock_data - lock the data zone;
 ```
+
+## Considerations
+
+The ATECC608A contains multiple hardware slots (described [here](http://ww1.microchip.com/downloads/en/DeviceDoc/20005927A.pdf), page 11). They contain different capabilities:
+
+* Slots 0 -7 can contain 36 bytes of data, so only private/secret keys, or data. They cannot contain public keys.
+* Slot 8 can contain up to 416 bytes of data, be it private or public keys, signatures, certificates, or just any data;
+* Slots 9-15 can contain 72 bytes of data - public/private keys, or data.
+
+Note the information that the application shows is limited:
+
+* There is no information from the hardware that indicates what's in a given slot.
+* The hardware configuration is very convoluted. Certain fields in the config zone have different meanings depending on other fields. Please read the datasheet for detailed information.
+
+This example was created to showcase certain features of ATECC608A with a given configuration without being tightly tied to it.
 
 ## Hardware interface
 
