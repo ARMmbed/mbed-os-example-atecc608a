@@ -281,7 +281,7 @@ psa_status_t test_sign_verify(psa_key_attributes_t *private_attributes,
                               psa_key_attributes_t *public_attributes)
 {
     psa_status_t status;
-    const uint8_t hash[hash_size] = {};
+    const uint8_t hash[hash_size] = {0};
     uint8_t signature[sig_size];
     size_t signature_length = 0;
     static uint8_t pubkey[pubkey_size];
