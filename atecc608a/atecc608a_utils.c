@@ -48,7 +48,8 @@ psa_status_t atecc608a_write_lock_config(const uint8_t *config_template,
 {
     psa_status_t status = PSA_ERROR_GENERIC_ERROR;
     const uint8_t config_size = 128;
-    uint16_t crc;
+    uint8_t crc[2];
+    uint16_t crc16;
     uint8_t config[config_size];
     bool config_locked = false;
 
@@ -69,10 +70,12 @@ psa_status_t atecc608a_write_lock_config(const uint8_t *config_template,
     /* Copy 16 bytes of device-specific data to the prepared config buffer */
     ASSERT_SUCCESS(atcab_read_bytes_zone(ATCA_ZONE_CONFIG, 0, 0, config, 16));
 
-    atCRC(length, config, &crc);
+    atCRC(length, config, crc);
+    /* atCRC guarantees that crc will be in little-endian byte order */
+    crc16 = (crc[1] << 8u) | crc[0];
 
     ASSERT_SUCCESS(atcab_write_config_zone(config));
-    ASSERT_SUCCESS(atcab_lock_config_zone_crc(crc));
+    ASSERT_SUCCESS(atcab_lock_config_zone_crc(crc16));
 
 exit:
     atecc608a_deinit();
