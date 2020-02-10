@@ -103,7 +103,7 @@ enum {
     key_bits = 256,
     hash_alg = PSA_ALG_SHA_256,
     alg = PSA_ALG_ECDSA(hash_alg),
-    sig_size = PSA_ASYMMETRIC_SIGN_OUTPUT_SIZE(key_type, key_bits, alg),
+    sig_size = PSA_ECDSA_SIGNATURE_SIZE(key_bits),
     pubkey_size = PSA_KEY_EXPORT_ECC_PUBLIC_KEY_MAX_SIZE(key_bits),
     hash_size = PSA_HASH_SIZE(hash_alg),
 };
