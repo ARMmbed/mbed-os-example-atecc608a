@@ -103,7 +103,7 @@ enum {
     key_bits = 256,
     hash_alg = PSA_ALG_SHA_256,
     alg = PSA_ALG_ECDSA(hash_alg),
-    sig_size = PSA_ASYMMETRIC_SIGN_OUTPUT_SIZE(key_type, key_bits, alg),
+    sig_size = PSA_ECDSA_SIGNATURE_SIZE(key_bits),
     pubkey_size = PSA_KEY_EXPORT_ECC_PUBLIC_KEY_MAX_SIZE(key_bits),
     hash_size = PSA_HASH_SIZE(hash_alg),
 };
@@ -281,7 +281,7 @@ psa_status_t test_sign_verify(psa_key_attributes_t *private_attributes,
                               psa_key_attributes_t *public_attributes)
 {
     psa_status_t status;
-    const uint8_t hash[hash_size] = {};
+    const uint8_t hash[hash_size] = {0};
     uint8_t signature[sig_size];
     size_t signature_length = 0;
     static uint8_t pubkey[pubkey_size];
