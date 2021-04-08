@@ -7,42 +7,43 @@ The examples in this repository demonstrate how to use the ATECC608A secure elem
 
 ## Prerequisites
 
-* [Install Mbed CLI](https://os.mbed.com/docs/mbed-os/latest/tools/installation-and-setup.html).
+A target with I2C and power supply connections, connected to an ATECC608A secure element as shown in [Hardware interface](#hardware-interface).
 
-* [Install the arm-none-eabi-ggc toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads).
-  - The [cryptoauthlib](https://github.com/MicrochipTech/cryptoauthlib) which
-    this example depends on [does not build on
-    IAR](https://github.com/ARMmbed/mbed-os-example-atecc608a/issues/15),
-    [ARMC5 or
-    ARMC6](https://github.com/ARMmbed/mbed-os-example-atecc608a/issues/16).
+## Mbed OS build tools
 
-* A target with I2C and power supply connections, connected to an ATECC608A secure element as shown in [Hardware interface](#hardware-interface).
+### Mbed CLI 2
+Starting with version 6.5, Mbed OS uses Mbed CLI 2. It uses Ninja as a build system, and CMake to generate the build environment and manage the build process in a compiler-independent manner. If you are working with Mbed OS version prior to 6.5 then check the section [Mbed CLI 1](#mbed-cli-1).
+1. [Install Mbed CLI 2](https://os.mbed.com/docs/mbed-os/latest/build-tools/install-or-upgrade.html).
+1. From the command-line, import the example: `mbed-tools import mbed-os-example-atecc608a`
+1. Change the current directory to `mbed-os-example-atecc608a/atecc608a`.
 
+### Mbed CLI 1
+1. [Install Mbed CLI 1](https://os.mbed.com/docs/mbed-os/latest/quick-start/offline-with-mbed-cli.html).
+1. From the command-line, import the example: `mbed import mbed-os-example-atecc608a`
+1. Change the current directory to `mbed-os-example-atecc608a/atecc608a`.
 
-## Importing the example
+## Building and running
 
-From the command-line, import the example:
+1. Connect a USB cable between the USB port on the board and the host computer.
+1. Run the following command to build the example project, program the microcontroller flash memory and open a serial monitor:
 
-```sh
-git clone git@github.com:ARMmbed/mbed-os-example-atecc608a.git
-cd mbed-os-example-atecc608a/atecc608a
-mbed deploy
+    * Mbed CLI 2
+
+    ```bash
+    $ mbed-tools compile -m <TARGET> -t <TOOLCHAIN> --flash --sterm
+    ```
+
+    * Mbed CLI 1
+
+    ```bash
+    $ mbed compile -m <TARGET> -t <TOOLCHAIN> --flash --sterm
+    ```
+
+Your PC may take a few minutes to compile your code.
+
+## Expected output
+
 ```
-
-## Compiling and running the example
-
-Invoke `mbed compile`, and specify the name of your platform and your toolchain
-(only `GCC_ARM` works at the moment). For example, for the GCC_ARM compiler:
-
-```sh
-mbed compile -t GCC_ARM -m K64F --flash --sterm
-```
-
-Your PC may take a few minutes to compile your code. At the end, you see the following result:
-
-```
-Image: ./BUILD/K64F/GCC_ARM/atecc608a.bin
---- Terminal on /dev/ttyACM0 - 9600,8,N,1 ---
 Serial Number:
 01 23 BA CF BA D3 29 CA EE
 
