@@ -93,3 +93,15 @@ matrix:
     - <<: *cmake-build-test
       name: "CMake atecc608a example - debug (K64F)"
       env: NAME=cmake_test TARGET_NAME=K64F PROFILE=debug CACHE_NAME=debug-K64F
+
+    - <<: *cmake-build-test
+      name: "CMake atecc608a example - develop (NRF52_DK)"
+      env: NAME=cmake_test TARGET_NAME=NRF52_DK PROFILE=develop CACHE_NAME=develop-NRF52_DK
+
+    - <<: *cmake-build-test
+      name: "CMake atecc608a example - release (NRF52_DK)"
+      env: NAME=cmake_test TARGET_NAME=NRF52_DK PROFILE=release CACHE_NAME=release-NRF52_DK
+
+    - <<: *cmake-build-test
+      name: "CMake atecc608a example - debug (NRF52_DK)"
+      env: NAME=cmake_test TARGET_NAME=NRF52_DK PROFILE=debug CACHE_NAME=debug-NRF52_DK

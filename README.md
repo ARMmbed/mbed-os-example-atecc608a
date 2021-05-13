@@ -9,6 +9,9 @@ The examples in this repository demonstrate how to use the ATECC608A secure elem
 
 A target with I2C and power supply connections, connected to an ATECC608A secure element as shown in [Hardware interface](#hardware-interface).
 
+Note: This example enables Mbed OS PSA. It is _not_ suitable for or compatible with TF-M which has its own PSA implementation
+(e.g. Arm TrustZone on Arm v8-M).
+
 ## Mbed OS build tools
 
 ### Mbed CLI 2
