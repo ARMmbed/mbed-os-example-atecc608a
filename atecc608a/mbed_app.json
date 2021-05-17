@@ -2,7 +2,7 @@
     "target_overrides": {
         "*": {
             "target.features_add" : ["EXPERIMENTAL_API", "PSA"],
-            "extra_labels_add": ["MBED_PSA_SRV"],
+            "target.extra_labels_add": ["MBED_PSA_SRV"],
             "platform.stdio-baud-rate": 9600,
             "platform.stdio-convert-newlines": true,
             "mbed-trace.enable": 0
