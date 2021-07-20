@@ -9,6 +9,8 @@ set(APP_TARGET mbed-os-example-atecc608a)
 
 include(${MBED_PATH}/tools/cmake/app.cmake)
 
+project(${APP_TARGET})
+
 add_subdirectory(${MBED_PATH})
 
 add_subdirectory(mbed-os-atecc608a)
@@ -16,8 +18,6 @@ add_subdirectory(mbed-os-atecc608a)
 add_executable(${APP_TARGET})
 
 mbed_configure_app_target(${APP_TARGET})
-
-project(${APP_TARGET})
 
 target_include_directories(${APP_TARGET}
     PRIVATE
