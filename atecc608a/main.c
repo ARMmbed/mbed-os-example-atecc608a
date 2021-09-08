@@ -355,7 +355,7 @@ void setup_key_attributes(psa_key_attributes_t *attributes,
 {
     psa_set_key_slot_number(attributes, slot);
     psa_set_key_id(attributes, key_id);
-    psa_set_key_lifetime(attributes, PSA_ATECC608A_LIFETIME);
+    psa_set_key_lifetime(attributes, PSA_ATECC608A_LIFETIME | PSA_ATECC608A_LOCATION << 8);
     psa_set_key_algorithm(attributes, alg);
     psa_set_key_bits(attributes, key_bits);
 
@@ -610,7 +610,7 @@ int main(void)
 
     print_device_info();
     mbed_psa_reboot_and_request_new_security_state(PSA_LIFECYCLE_ASSEMBLY_AND_TEST);
-    ASSERT_SUCCESS_PSA(psa_register_se_driver(PSA_ATECC608A_LIFETIME, &atecc608a_drv_info));
+    ASSERT_SUCCESS_PSA(psa_register_se_driver(PSA_ATECC608A_LOCATION, &atecc608a_drv_info));
 
     ASSERT_SUCCESS_PSA(psa_crypto_init());
     run_tests();
