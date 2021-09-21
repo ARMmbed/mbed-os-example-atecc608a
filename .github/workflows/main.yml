@@ -1,0 +1,58 @@
+name: Build example application
+
+on:
+  pull_request:
+  push:
+
+jobs: 
+  build-cli-v1:
+    container:
+      image: ghcr.io/armmbed/mbed-os-env:master-latest
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        target: [K64F, NRF52_DK]
+        profile: [release, debug, develop]
+        sub_example: [atecc608a]  
+        
+
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+          
+      -
+        name: build-example
+        run: |
+          set -e
+          mbed deploy
+          cd ${{ matrix.sub_example }}
+          mbed compile -t GCC_ARM -m ${{ matrix.target }} --profile ${{ matrix.profile }}
+          
+
+  build-cli-v2:
+    container:
+      image: ghcr.io/armmbed/mbed-os-env:master-latest
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        target: [K64F, NRF52_DK]
+        profile: [release, debug, develop]
+        sub_example: [atecc608a]      
+
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+          
+      -
+        name: build-example-application
+        run: |
+          set -e
+          mbed-tools deploy
+          cd ${{ matrix.sub_example }}
+          mbed-tools compile -t GCC_ARM -m ${{ matrix.target }} --profile ${{ matrix.profile }}
