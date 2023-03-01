@@ -1,0 +1,45 @@
+Provisioning device...
+	Erasing secure storage... done.
+	Registering drivers... done.
+	Initializing PSA Crypto... done.
+	Registering factory-created keys... done.
+	Generating keys within the secure element... done.
+Device provisioned
+
+---------------------------------------------------------------------
+
+Device public keys:
+	Key ID 16:
+-----BEGIN PUBLIC KEY-----
+[0-9a-fA-F+/=]+
+[0-9a-fA-F+/=]+
+-----END PUBLIC KEY-----
+
+	Key ID 18:
+-----BEGIN PUBLIC KEY-----
+[0-9a-fA-F+/=]+
+[0-9a-fA-F+/=]+
+-----END PUBLIC KEY-----
+
+Device-generated CSRs:
+	Key ID 16:
+-----BEGIN CERTIFICATE REQUEST-----
+[0-9a-fA-F+/=]+
+[0-9a-fA-F+/=]+
+[0-9a-fA-F+/=]+
+[0-9a-fA-F+/=]+
+[0-9a-fA-F+/=]+
+[0-9a-fA-F+/=]+
+[0-9a-fA-F+/=]+
+-----END CERTIFICATE REQUEST-----
+
+	Key ID 18:
+-----BEGIN CERTIFICATE REQUEST-----
+[0-9a-fA-F+/=]+
+[0-9a-fA-F+/=]+
+[0-9a-fA-F+/=]+
+[0-9a-fA-F+/=]+
+[0-9a-fA-F+/=]+
+[0-9a-fA-F+/=]+
+[0-9a-fA-F+/=]+
+-----END CERTIFICATE REQUEST-----

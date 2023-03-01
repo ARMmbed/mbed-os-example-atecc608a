@@ -1,0 +1,22 @@
+{
+    "target_overrides": {
+        "*": {
+            "platform.stdio-baud-rate": 9600,
+            "platform.stdio-convert-newlines": true,
+            "target.OUTPUT_EXT": "hex",
+            "mbed-trace.enable": 0
+        },
+        "NRF52_DK": {
+            "cryptoauthlib.i2c_sda": "P0_26",
+            "cryptoauthlib.i2c_scl": "P0_27"
+        },
+        "SAML21J18A": {
+            "cryptoauthlib.i2c_sda": "PA08",
+            "cryptoauthlib.i2c_scl": "PA09"
+        }
+    },
+    "macros": [
+        "ATCAPRINTF",
+        "MBEDTLS_USER_CONFIG_FILE=\"mbedtls_user_config.h\""
+    ]
+}
